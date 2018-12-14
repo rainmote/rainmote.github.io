@@ -104,16 +104,18 @@
 
 
 
-  <meta name="description" content="吾生也有涯，而知也无涯">
-<meta property="og:type" content="website">
-<meta property="og:title" content="雨中尘埃">
-<meta property="og:url" content="http://rainmote.cn/index.html">
+  <meta name="description" content="背景有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。git-log文档 实现本示例使用clojure实现，我们可以看到其简洁、优美之处。 定义format选项格式化参数可以参考git log文档，1234567891011121314151617181920(defn get-git-log-params []  &amp;#123;:co">
+<meta name="keywords" content="clojure git">
+<meta property="og:type" content="article">
+<meta property="og:title" content="git log输出json格式">
+<meta property="og:url" content="http://rainmote.cn/2018/12/14/git-log输出json格式/index.html">
 <meta property="og:site_name" content="雨中尘埃">
-<meta property="og:description" content="吾生也有涯，而知也无涯">
+<meta property="og:description" content="背景有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。git-log文档 实现本示例使用clojure实现，我们可以看到其简洁、优美之处。 定义format选项格式化参数可以参考git log文档，1234567891011121314151617181920(defn get-git-log-params []  &amp;#123;:co">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-12-14T00:40:29.150Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="雨中尘埃">
-<meta name="twitter:description" content="吾生也有涯，而知也无涯">
+<meta name="twitter:title" content="git log输出json格式">
+<meta name="twitter:description" content="背景有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。git-log文档 实现本示例使用clojure实现，我们可以看到其简洁、优美之处。 定义format选项格式化参数可以参考git log文档，1234567891011121314151617181920(defn get-git-log-params []  &amp;#123;:co">
 
 
 
@@ -122,7 +124,7 @@
 
 
 
-  <link rel="canonical" href="http://rainmote.cn/">
+  <link rel="canonical" href="http://rainmote.cn/2018/12/14/git-log输出json格式/">
 
 
 
@@ -132,7 +134,7 @@
   };
 </script>
 
-  <title>雨中尘埃</title>
+  <title>git log输出json格式 | 雨中尘埃</title>
   
 
 
@@ -180,8 +182,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -218,7 +219,7 @@
         
         
           
-          <li class="menu-item menu-item-home menu-item-active">
+          <li class="menu-item menu-item-home">
 
     
     
@@ -314,9 +315,9 @@
           
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -348,10 +349,8 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/14/git-log输出json格式/" class="post-title-link" itemprop="http://rainmote.cn/index.html">git log输出json格式</a>
+          <h1 class="post-title" itemprop="name headline">git log输出json格式
+
               
             
           </h1>
@@ -414,9 +413,7 @@
       
 
       
-        
-          
-            <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。<br><a href="https://git-scm.com/docs/git-log" target="_blank" rel="noopener">git-log文档</a></p>
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。<br><a href="https://git-scm.com/docs/git-log" target="_blank" rel="noopener">git-log文档</a></p>
 <h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>本示例使用<code>clojure</code>实现，我们可以看到其简洁、优美之处。</p>
 <h2 id="定义format选项"><a href="#定义format选项" class="headerlink" title="定义format选项"></a>定义format选项</h2><p>格式化参数可以参考git log文档，<br><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">defn</span></span> get-git-log-params []</span><br><span class="line">  &#123;<span class="symbol">:commit</span> <span class="string">"%H"</span></span><br><span class="line">   <span class="symbol">:abbreviated-commit</span> <span class="string">"%h"</span></span><br><span class="line">   <span class="symbol">:tree</span> <span class="string">"%T"</span></span><br><span class="line">   <span class="symbol">:abbreviated-tree</span> <span class="string">"%t"</span></span><br><span class="line">   <span class="symbol">:parent</span> <span class="string">"%P"</span></span><br><span class="line">   <span class="symbol">:abbreviated-parent</span> <span class="string">"%p"</span></span><br><span class="line">   <span class="symbol">:refs</span> <span class="string">"%D"</span></span><br><span class="line">   <span class="symbol">:encoding</span> <span class="string">"%e"</span></span><br><span class="line">   <span class="symbol">:subject</span> <span class="string">"%s"</span></span><br><span class="line">   <span class="symbol">:body</span> <span class="string">"%b"</span></span><br><span class="line">   <span class="symbol">:commit-notes</span> <span class="string">"%N"</span></span><br><span class="line">   <span class="symbol">:author-name</span> <span class="string">"%aN"</span></span><br><span class="line">   <span class="symbol">:author-email</span> <span class="string">"%aE"</span></span><br><span class="line">   <span class="symbol">:author-date</span> <span class="string">"%ai"</span></span><br><span class="line">   <span class="symbol">:author-timestamp</span> <span class="string">"%at"</span></span><br><span class="line">   <span class="symbol">:committer-name</span> <span class="string">"%cN"</span></span><br><span class="line">   <span class="symbol">:committer-email</span> <span class="string">"%cE"</span></span><br><span class="line">   <span class="symbol">:committer-date</span> <span class="string">"%ci"</span></span><br><span class="line">   <span class="symbol">:committer-timestamp</span> <span class="string">"%ct"</span>&#125;)</span><br></pre></td></tr></table></figure></p>
 <h2 id="格式化方式选择"><a href="#格式化方式选择" class="headerlink" title="格式化方式选择"></a>格式化方式选择</h2><p>我们需要格式化为json格式，format支持自定义格式，我们有两种方式可以选择：</p>
@@ -445,8 +442,6 @@
 </blockquote>
 <h1 id="完整实现"><a href="#完整实现" class="headerlink" title="完整实现"></a>完整实现</h1><p>见 <a href="https://github.com/rainmote/blog-example/blob/master/git-log.clj" target="_blank" rel="noopener">https://github.com/rainmote/blog-example/blob/master/git-log.clj</a></p>
 
-          
-        
       
     </div>
 
@@ -467,160 +462,36 @@
 
     <footer class="post-footer">
       
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://rainmote.cn/2018/12/13/hello-world/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="rain mote">
-      <meta itemprop="description" content="吾生也有涯，而知也无涯">
-      <meta itemprop="image" content="/uploads/longmao.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="雨中尘埃">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2018/12/13/hello-world/" class="post-title-link" itemprop="http://rainmote.cn/index.html">Hello World</a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2018-12-13 23:38:35" itemprop="dateCreated datePublished" datetime="2018-12-13T23:38:35+08:00">2018-12-13</time>
-            
-
-            
-          </span>
-
+        <div class="post-tags">
           
-
+            <a href="/tags/clojure-git/" rel="tag"># clojure git</a>
           
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
         </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-          
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
       
 
       
       
-        <div class="post-eof"></div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/13/hello-world/" rel="next" title="Hello World">
+                <i class="fa fa-chevron-left"></i> Hello World
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
       
     </footer>
   </div>
@@ -630,14 +501,15 @@
   </article>
 
 
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -658,8 +530,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -751,6 +632,22 @@
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#背景"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#实现"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定义format选项"><span class="nav-number">2.1.</span> <span class="nav-text">定义format选项</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#格式化方式选择"><span class="nav-number">2.2.</span> <span class="nav-text">格式化方式选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#需要用的小知识点"><span class="nav-number">2.3.</span> <span class="nav-text">需要用的小知识点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实现步骤"><span class="nav-number">2.4.</span> <span class="nav-text">实现步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义分割符"><span class="nav-number">2.4.1.</span> <span class="nav-text">定义分割符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拆分参数并构造命令"><span class="nav-number">2.4.2.</span> <span class="nav-text">拆分参数并构造命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行shell命令"><span class="nav-number">2.4.3.</span> <span class="nav-text">执行shell命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解析结果"><span class="nav-number">2.4.4.</span> <span class="nav-text">解析结果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#完整实现"><span class="nav-number">3.</span> <span class="nav-text">完整实现</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       
@@ -886,6 +783,10 @@
 
 
   
+  <script src="/js/src/scrollspy.js?v=6.6.0"></script>
+<script src="/js/src/post-details.js?v=6.6.0"></script>
+
+
 
   
 
