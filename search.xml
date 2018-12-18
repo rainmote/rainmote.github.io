@@ -6,11 +6,12 @@
     <content type="text"><![CDATA[背景有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。git-log文档 实现本示例使用clojure实现，我们可以看到其简洁、优美之处。 定义format选项格式化参数可以参考git log文档，1234567891011121314151617181920(defn get-git-log-params [] &#123;:commit "%H" :abbreviated-commit "%h" :tree "%T" :abbreviated-tree "%t" :parent "%P" :abbreviated-parent "%p" :refs "%D" :encoding "%e" :subject "%s" :body "%b" :commit-notes "%N" :author-name "%aN" :author-email "%aE" :author-date "%ai" :author-timestamp "%at" :committer-name "%cN" :committer-email "%cE" :committer-date "%ci" :committer-timestamp "%ct"&#125;) 格式化方式选择我们需要格式化为json格式，format支持自定义格式，我们有两种方式可以选择： format参数直接包装为json格式此种方式每个commit之后需要加个空格，最末尾的需要去除。优点：直接得到json缺点：某些字段内容包含引号，转义问题不容易解决 利用特殊分隔字符我们将每个输出参数分隔，再将每个commit输出分隔，拿到输出后进行解析。优点：不用考虑转义问题缺点：实现略微复杂不过我们利用clojure可以很方便实现。 需要用的小知识点1234567891011;; 字符串切分user=&gt; (clojure.string/split "a#&amp;b#&amp;c" (re-pattern "#&amp;"))["a" "b" "c"];; key和value组合为mapuser=&gt; (into &#123;&#125; (mapv vector [:a :b :c] [1 2 3]))&#123;:a 1, :b 2, :c 3&#125;;; map拆分为ks vsuser=&gt; (apply mapv vector (seq *1))[[:a :b :c] [1 2 3]] 实现步骤定义分割符12(def magic-item "&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=")(def magic-line "#@#@#@#@#@#@") 拆分参数并构造命令12345;; 这里用到了参数解构，线性宏(let [[ks vs] (apply mapv vector (seq (get-git-log-params)))] (-&gt; (clojure.string/join magic-item vs) (str ,,, magic-line) (#(format "git log remotes/origin/%s --format='%s'" branch-name %) ,,,))) 执行shell命令1234user=&gt; (require '[clojure.java.shell :as shell])niluser=&gt; (-&gt;&gt; (shell/sh "bash" "-c" "date") :out)"Fri Dec 14 08:28:00 CST 2018\n" 这里使用bash -c是个小技巧，后面的命令可以可以放在一个字符串中处理。 解析结果假设我们完成了上述步骤，将会得到如下格式的输出：1aaa&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=bbb&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=ccc#@#@#@#@#@#@123&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=456&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=789\n 我们需要按照如下步骤解析： 删除末尾换行 按照行分隔符切分 每行再按照列分隔符切分 组合key和切分后的内容 具体实现如下：12345678910111213141516(-&gt;&gt; (clojure.java.shell/sh "bash" "-c" (-&gt; (clojure.string/join magic-item vs) (str ,,, magic-line) (#(format "git log remotes/origin/%s --format='%s'" branch %) ,,,)) :dir code-path) :out clojure.string/trim-newline ;; split output to line (#(clojure.string/split % (re-pattern magic-line)) ,,,) ;; split line to item (map #(clojure.string/split % (re-pattern magic-item)) ,,,) ;; combination ks and output into map ;; [:a :b] [1 2] =&gt; &#123;:a 1 :b 2&#125; (map #(into &#123;&#125; (mapv vector ks %)) ,,,) ;; convert to json (cheshire.core/generate-string ,,,)) 我们将默认的map改用pmap，即可多核并行处理，clojure就是如此简单。 完整实现见 https://github.com/rainmote/blog-example/blob/master/git-log.clj]]></content>
       <categories>
         <category>工具</category>
-        <category>clojure</category>
+        <category>git</category>
       </categories>
       <tags>
-        <tag>clojure练习</tag>
+        <tag>clojure</tag>
         <tag>git</tag>
+        <tag>练习</tag>
       </tags>
   </entry>
 </search>
