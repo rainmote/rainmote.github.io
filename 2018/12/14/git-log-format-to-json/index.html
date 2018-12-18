@@ -105,14 +105,14 @@
 
 
   <meta name="description" content="背景有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。git-log文档 实现本示例使用clojure实现，我们可以看到其简洁、优美之处。 定义format选项格式化参数可以参考git log文档，1234567891011121314151617181920(defn get-git-log-params []  &amp;#123;:co">
-<meta name="keywords" content="clojure git">
+<meta name="keywords" content="clojure练习,git">
 <meta property="og:type" content="article">
 <meta property="og:title" content="git log输出json格式">
-<meta property="og:url" content="http://rainmote.cn/2018/12/14/git-log输出json格式/index.html">
+<meta property="og:url" content="http://www.rainmote.cn/2018/12/14/git-log-format-to-json/index.html">
 <meta property="og:site_name" content="雨中尘埃">
 <meta property="og:description" content="背景有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。git-log文档 实现本示例使用clojure实现，我们可以看到其简洁、优美之处。 定义format选项格式化参数可以参考git log文档，1234567891011121314151617181920(defn get-git-log-params []  &amp;#123;:co">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2018-12-14T00:44:40.340Z">
+<meta property="og:updated_time" content="2018-12-18T10:23:56.529Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="git log输出json格式">
 <meta name="twitter:description" content="背景有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。git-log文档 实现本示例使用clojure实现，我们可以看到其简洁、优美之处。 定义format选项格式化参数可以参考git log文档，1234567891011121314151617181920(defn get-git-log-params []  &amp;#123;:co">
@@ -124,7 +124,7 @@
 
 
 
-  <link rel="canonical" href="http://rainmote.cn/2018/12/14/git-log输出json格式/">
+  <link rel="canonical" href="http://www.rainmote.cn/2018/12/14/git-log-format-to-json/">
 
 
 
@@ -332,7 +332,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://rainmote.cn/2018/12/14/git-log输出json格式/">
+    <link itemprop="mainEntityOfPage" href="http://www.rainmote.cn/2018/12/14/git-log-format-to-json/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="rain mote">
@@ -375,16 +375,53 @@
                 
               
 
-              <time title="创建时间：2018-12-14 08:02:30 / 修改时间：08:44:40" itemprop="dateCreated datePublished" datetime="2018-12-14T08:02:30+08:00">2018-12-14</time>
+              <time title="创建时间：2018-12-14 08:02:30" itemprop="dateCreated datePublished" datetime="2018-12-14T08:02:30+08:00">2018-12-14</time>
             
 
             
               
 
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2018-12-18 18:23:56" itemprop="dateModified" datetime="2018-12-18T18:23:56+08:00">2018-12-18</time>
               
             
           </span>
 
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/工具/" itemprop="url" rel="index"><span itemprop="name">工具</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing"><a href="/categories/工具/clojure/" itemprop="url" rel="index"><span itemprop="name">clojure</span></a></span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -416,6 +453,7 @@
         <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。<br><a href="https://git-scm.com/docs/git-log" target="_blank" rel="noopener">git-log文档</a></p>
 <h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>本示例使用<code>clojure</code>实现，我们可以看到其简洁、优美之处。</p>
 <h2 id="定义format选项"><a href="#定义format选项" class="headerlink" title="定义format选项"></a>定义format选项</h2><p>格式化参数可以参考git log文档，<br><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">defn</span></span> get-git-log-params []</span><br><span class="line">  &#123;<span class="symbol">:commit</span> <span class="string">"%H"</span></span><br><span class="line">   <span class="symbol">:abbreviated-commit</span> <span class="string">"%h"</span></span><br><span class="line">   <span class="symbol">:tree</span> <span class="string">"%T"</span></span><br><span class="line">   <span class="symbol">:abbreviated-tree</span> <span class="string">"%t"</span></span><br><span class="line">   <span class="symbol">:parent</span> <span class="string">"%P"</span></span><br><span class="line">   <span class="symbol">:abbreviated-parent</span> <span class="string">"%p"</span></span><br><span class="line">   <span class="symbol">:refs</span> <span class="string">"%D"</span></span><br><span class="line">   <span class="symbol">:encoding</span> <span class="string">"%e"</span></span><br><span class="line">   <span class="symbol">:subject</span> <span class="string">"%s"</span></span><br><span class="line">   <span class="symbol">:body</span> <span class="string">"%b"</span></span><br><span class="line">   <span class="symbol">:commit-notes</span> <span class="string">"%N"</span></span><br><span class="line">   <span class="symbol">:author-name</span> <span class="string">"%aN"</span></span><br><span class="line">   <span class="symbol">:author-email</span> <span class="string">"%aE"</span></span><br><span class="line">   <span class="symbol">:author-date</span> <span class="string">"%ai"</span></span><br><span class="line">   <span class="symbol">:author-timestamp</span> <span class="string">"%at"</span></span><br><span class="line">   <span class="symbol">:committer-name</span> <span class="string">"%cN"</span></span><br><span class="line">   <span class="symbol">:committer-email</span> <span class="string">"%cE"</span></span><br><span class="line">   <span class="symbol">:committer-date</span> <span class="string">"%ci"</span></span><br><span class="line">   <span class="symbol">:committer-timestamp</span> <span class="string">"%ct"</span>&#125;)</span><br></pre></td></tr></table></figure></p>
+<a id="more"></a>
 <h2 id="格式化方式选择"><a href="#格式化方式选择" class="headerlink" title="格式化方式选择"></a>格式化方式选择</h2><p>我们需要格式化为json格式，format支持自定义格式，我们有两种方式可以选择：</p>
 <ol>
 <li><p>format参数直接包装为json格式<br>此种方式每个commit之后需要加个空格，最末尾的需要去除。<br>优点：直接得到json<br>缺点：某些字段内容包含引号，转义问题不容易解决</p>
@@ -464,7 +502,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/clojure-git/" rel="tag"># clojure git</a>
+            <a href="/tags/clojure练习/" rel="tag"># clojure练习</a>
+          
+            <a href="/tags/git/" rel="tag"># git</a>
           
         </div>
       
@@ -564,6 +604,21 @@
               
 
               
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">2</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
 
               
                 
@@ -574,7 +629,9 @@
                     
                       
                     
-                    <span class="site-state-item-count">1</span>
+                      
+                    
+                    <span class="site-state-item-count">2</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
