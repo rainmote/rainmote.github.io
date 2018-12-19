@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.rainmote.cn/"/>
-  <updated>2018-12-19T01:03:33.688Z</updated>
+  <updated>2018-12-18T15:40:16.599Z</updated>
   <id>http://www.rainmote.cn/</id>
   
   <author>
@@ -15,28 +15,6 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
-  
-  <entry>
-    <title>testimage</title>
-    <link href="http://www.rainmote.cn/2018/12/19/testimage/"/>
-    <id>http://www.rainmote.cn/2018/12/19/testimage/</id>
-    <published>2018-12-19T00:50:52.000Z</published>
-    <updated>2018-12-19T01:03:33.688Z</updated>
-    
-    <content type="html"><![CDATA[<p><img src="http://rainmote-web.oss-cn-shanghai.aliyuncs.com/d1ccb9d48d8c0e27cef0d02cb27902ed.png" alt="test image title"></p>]]></content>
-    
-    <summary type="html">
-    
-      
-      
-        &lt;p&gt;&lt;img src=&quot;http://rainmote-web.oss-cn-shanghai.aliyuncs.com/d1ccb9d48d8c0e27cef0d02cb27902ed.png&quot; alt=&quot;test image title&quot;&gt;&lt;/p&gt;
-
-      
-    
-    </summary>
-    
-    
-  </entry>
   
   <entry>
     <title>git log输出json格式</title>
