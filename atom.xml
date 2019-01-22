@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://www.rainmote.cn/"/>
-  <updated>2018-12-18T15:40:16.599Z</updated>
+  <updated>2019-01-22T16:45:01.522Z</updated>
   <id>http://www.rainmote.cn/</id>
   
   <author>
@@ -15,6 +15,29 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>2018年度学习总结</title>
+    <link href="http://www.rainmote.cn/2019/01/23/2018%E5%B9%B4%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/"/>
+    <id>http://www.rainmote.cn/2019/01/23/2018年度学习总结/</id>
+    <published>2019-01-22T16:33:05.000Z</published>
+    <updated>2019-01-22T16:45:01.522Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="2018年度业余学习总结"><a href="#2018年度业余学习总结" class="headerlink" title="2018年度业余学习总结"></a>2018年度业余学习总结</h1><p>回首2018，时间如此之快；今年工作之余的学习也有较多收获，故予以总结，一来以便回顾查漏补缺，二来制定明年学习计划。</p><p>备注：本篇只总结业余时间的学习，工作相关的不便公开。</p><h1 id="年度知识关键词"><a href="#年度知识关键词" class="headerlink" title="年度知识关键词"></a>年度知识关键词</h1><p>Clojure DNS协议 数据可视化 IoT数字电路 移动端开发 NAS 全栈 Postgresql 黎曼猜想</p><h1 id="学习总结"><a href="#学习总结" class="headerlink" title="学习总结"></a>学习总结</h1><h2 id="clojure"><a href="#clojure" class="headerlink" title="clojure"></a>clojure</h2><p>学习使用clojure+clojurescript进行全栈开发，实现了单页面应用基本网站架构，和较为复杂的页面查询。完成了两个网页：工作的一些测试工具展示；自己的个人工具集网站。<br><a id="more"></a></p><h3 id="cljsrn"><a href="#cljsrn" class="headerlink" title="cljsrn"></a>cljsrn</h3><p>使用clojurescript+react native编写app，计划做个手机APP来将照片加密上传存储在OSS或者S3，目前进度是完成了初步的页面，主要的加密、上传功能还没有开始做。</p><p><img src="/images/blog/Untitled-5c0f8739-5fd5-4762-9bec-caf7ad272487.png" alt=""><img src="/images/blog/Untitled-711150d5-366d-499b-87f3-2775c4c2ef3a.png" alt=""><img src="/images/blog/Untitled-39f3f48f-f33a-4bfe-bb1f-b09a04ab8417.png" alt=""></p><h3 id="使用gloss库进行网络协议开发"><a href="#使用gloss库进行网络协议开发" class="headerlink" title="使用gloss库进行网络协议开发"></a>使用<strong>gloss</strong>库进行网络协议开发</h3><p>为了获取单个域名CDN节点，想法是搜集全国的DNS服务器，然后向这些DNS服务发起查询请求，得到CDN节点。由于DNS协议比较奇葩，目前gloss库对这种可变头部决定后续内容，目前实现了构造数据包，对于响应包解析还存在问题，目前gloss库作者已经不再维护，后续有时间可以再研究下这个问题。</p><p><img src="/images/blog/Untitled-4e1a49a4-91b6-405d-afb7-d909efc06f14.png" alt=""></p><h3 id="luminus"><a href="#luminus" class="headerlink" title="luminus"></a>luminus</h3><p>clojure luminus非常好用， 可以直接生成一个包含各个组件的应用。</p><p><a href="http://www.luminusweb.net/" target="_blank" rel="noopener">http://www.luminusweb.net/</a></p><p>书写自己的工具时使用了postgresql，发现其非常好用，不仅和mongodb一样，支持存储json格式，而且和mysql一样， 是关系型数据库。</p><h3 id="管道数据流思想"><a href="#管道数据流思想" class="headerlink" title="管道数据流思想"></a>管道数据流思想</h3><p><a href="https://github.com/linpengcheng/PurefunctionPipelineDataflow" target="_blank" rel="noopener">https://github.com/linpengcheng/PurefunctionPipelineDataflow</a></p><p>使用该思想，可以方便的将代码结构简化，但是入门时还是总是会不自觉的将代码复杂度提高，需要不断练习、体会。</p><h2 id="IoT"><a href="#IoT" class="headerlink" title="IoT"></a>IoT</h2><p>IoT本年度主要思考智能家居方面，从去年的尝试模拟身份证ID，想着直接拆解室内终端，尝试监听电路信号，模拟重放开门信号；发现了数字分析仪，于是购买了Digilent OpenScope MZ，直接连接在线路上，没做任何保护，结果就是烧毁了。</p><p>后来又发现了物美价廉的DsLogic数字分析仪，于是入手一个，采集信号后，利用树莓派模拟发现信号电压不够，多试了几次发现树莓派也被烧毁了……</p><p>下图是DsLogic的监听数字信号的结果：</p><p><img src="/images/blog/Untitled-3cea2973-89c4-46a8-a41f-e2e2eb8dff1a.png" alt=""></p><p>和同学聊天中知晓了些电路知识，发现自己这块还是空白，于是找了麻省理工的数字电路公开课，学习第一节就明显感觉牛逼学校教授知识确实很赞，从基本的电路知识，一层一层介绍了后续知识的拓展，描绘出了数字电路一层一层抽象发展出的计算机学科。</p><h1 id="好用的工具"><a href="#好用的工具" class="headerlink" title="好用的工具"></a>好用的工具</h1><ul><li>Explainshell</li></ul><p>好用的Linux命令参数解释工具，对于复杂命令可以拆解理解。</p><p>示例:<br><a href="https://explainshell.com/explain?cmd=git+log+--all+--graph+--decorate+--oneline+--simplify-by-decoration" target="_blank" rel="noopener">https://explainshell.com/explain?cmd=git+log+–all+–graph+–decorate+–oneline+–simplify-by-decoration</a></p><ul><li>graph-easy</li></ul><p>生成ascii图形，相比较graphviz，可以方便生成ascii图形，对于利用github搭建的静态博客，图片存储很麻烦，所以写博客时使用ascii图形表达更加方便。</p><ul><li>outline</li></ul><p>google的母公司出品，包装了ss，傻瓜式安装、配置、管理，多平台，非常方便。</p><p><a href="https://www.getoutline.org/" target="_blank" rel="noopener">https://www.getoutline.org/</a>（需要梯子）</p><ul><li>Notion</li></ul><p>用过的最好的笔记软件</p><h1 id="Other"><a href="#Other" class="headerlink" title="Other"></a>Other</h1><h2 id="黎曼猜想"><a href="#黎曼猜想" class="headerlink" title="黎曼猜想"></a>黎曼猜想</h2><p>黎曼猜想被证明可谓是一大新闻。</p><p>业余买了两本相关书籍，大概了解了黎曼猜想讲了什么，但是其中很多概念不了解。</p><p>比如虚数，之前学习的时候记得规定i的平方是-1，但是为什么是这样的呢？当查阅资料了解更多时，就会发现数学发展与人类进步密切相关。</p><p>从最开始的正整数1、2、3……，到加入0后的自然数，再到负数，然后到有理数（3/5等），接着到无理数（根号2），已经到了实数域。</p><p>可以将复数看作为一种工具，它的引入是为了解决问题。那么为什么是引入这样的，而不是那样的？</p><p>关于复数的引入，可在网上找到很多文章</p><p>比如：<a href="http://www.ruanyifeng.com/blog/2012/09/imaginary_number.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2012/09/imaginary_number.html</a>。</p><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>2018年相比2017年学到的东西深入了一点，这一年业余主要写clojure，但是很多项目都比较零碎，目前正在做的就是一个自己工具，将零碎的小工具整合，主要实现web页面，方便使用管理。<br>工作上的事情也颇多，较为好的一点是做自己擅长且喜欢的工作了，心里压力小了很多；这也是利用业余时间能够学习更多的原因。</p><p>新的一年，继续整理自己工具，写clojure，折腾智能家居，顺便看看那些年不知道的所以然（数学为什么是这样的？），^_^</p>]]></content>
+    
+    <summary type="html">
+    
+      &lt;h1 id=&quot;2018年度业余学习总结&quot;&gt;&lt;a href=&quot;#2018年度业余学习总结&quot; class=&quot;headerlink&quot; title=&quot;2018年度业余学习总结&quot;&gt;&lt;/a&gt;2018年度业余学习总结&lt;/h1&gt;&lt;p&gt;回首2018，时间如此之快；今年工作之余的学习也有较多收获，故予以总结，一来以便回顾查漏补缺，二来制定明年学习计划。&lt;/p&gt;
+&lt;p&gt;备注：本篇只总结业余时间的学习，工作相关的不便公开。&lt;/p&gt;
+&lt;h1 id=&quot;年度知识关键词&quot;&gt;&lt;a href=&quot;#年度知识关键词&quot; class=&quot;headerlink&quot; title=&quot;年度知识关键词&quot;&gt;&lt;/a&gt;年度知识关键词&lt;/h1&gt;&lt;p&gt;Clojure DNS协议 数据可视化 IoT数字电路 移动端开发 NAS 全栈 Postgresql 黎曼猜想&lt;/p&gt;
+&lt;h1 id=&quot;学习总结&quot;&gt;&lt;a href=&quot;#学习总结&quot; class=&quot;headerlink&quot; title=&quot;学习总结&quot;&gt;&lt;/a&gt;学习总结&lt;/h1&gt;&lt;h2 id=&quot;clojure&quot;&gt;&lt;a href=&quot;#clojure&quot; class=&quot;headerlink&quot; title=&quot;clojure&quot;&gt;&lt;/a&gt;clojure&lt;/h2&gt;&lt;p&gt;学习使用clojure+clojurescript进行全栈开发，实现了单页面应用基本网站架构，和较为复杂的页面查询。完成了两个网页：工作的一些测试工具展示；自己的个人工具集网站。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="总结" scheme="http://www.rainmote.cn/tags/%E6%80%BB%E7%BB%93/"/>
+    
+  </entry>
   
   <entry>
     <title>git log输出json格式</title>
