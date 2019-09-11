@@ -8,8 +8,8 @@
     </url>
 
     <url>
-        <loc>http://www.rainmote.cn/2019/01/23/2018%E5%B9%B4%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/</loc>
-        <lastmod>2019-01-22T16:45:01.522Z</lastmod>
+        <loc>http://www.rainmote.cn/2019/09/11/python%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%A0%BC%E5%BC%8F%E5%8C%96/</loc>
+        <lastmod>2019-09-11T15:22:08.581Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -17,7 +17,15 @@
 
     <url>
         <loc>http://www.rainmote.cn/2018/12/14/git-log-format-to-json/</loc>
-        <lastmod>2018-12-18T15:40:16.599Z</lastmod>
+        <lastmod>2019-09-11T15:21:14.995Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
+        <loc>http://www.rainmote.cn/2019/01/23/2018%E5%B9%B4%E5%BA%A6%E5%AD%A6%E4%B9%A0%E6%80%BB%E7%BB%93/</loc>
+        <lastmod>2019-09-11T15:21:10.580Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 

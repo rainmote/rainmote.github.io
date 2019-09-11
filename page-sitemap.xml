@@ -8,29 +8,22 @@
     </url>
     
     <url>
-        <loc>http://www.rainmote.cn/tags/index-1.html</loc>
-        <lastmod>2018-12-18T09:26:24.355Z</lastmod>
+        <loc>http://www.rainmote.cn/categories/</loc>
+        <lastmod>2019-09-11T16:44:31.902Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
         <loc>http://www.rainmote.cn/about/</loc>
-        <lastmod>2018-12-18T09:25:36.739Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <url>
-        <loc>http://www.rainmote.cn/categories/</loc>
-        <lastmod>2018-12-13T17:10:26.388Z</lastmod>
+        <lastmod>2018-12-18T09:25:36.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
         <loc>http://www.rainmote.cn/tags/</loc>
-        <lastmod>2018-12-13T17:09:16.282Z</lastmod>
+        <lastmod>2018-12-13T17:09:16.000Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
