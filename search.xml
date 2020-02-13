@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[技能树 & 项目状态]]></title>
     <url>%2F2019%2F09%2F12%2Fcurrent%2F</url>
-    <content type="text"><![CDATA[]]></content>
+    <content type="text"><![CDATA[吾将上下而求索 值得你了解的工具 Marp: 使用markdown写ppt GraphEasy: 生成ascii流程图，很酷且高效 Notion: 迄今为止最好用的笔记软件 Anytype: 仿照notion，以web3为基础，开源，可私有部署 Hammerspoon: MAC上强大的自动化工具 使用lua封装了系统层api，可以非常简单、高效实现自动化 功能包括且不限于： 窗口管理（多屏幕移动） 剪贴板 全局快捷键 自动化脚本 控制wifi/蓝牙 dock显示信息，资讯/githubPR/天气预报 …… 可以让你少买很多软件;用了就无法自拔的神器 spacehammer: 一个好用的Hammerspoon的配置库 使用仿clojure的Fennel语言编写，利用Lisp强大的表达能力，语法非常简洁优美 仿spacemacs的操作方式，上手十分简单，处处有提示 Kodi: 家庭影音中心 可以配置直播源，有网就能看电视，可以配置全球电视源 可以集成app，直接访问网络资源，如优酷，百度云等 Mac上安装，局域网看视频；支持丰富的视频格式 一个树莓派，让普通电视智能化 智能家居 NAS HomeAssistant 硬件设备 小米系列 峥果：浴霸,墙壁开关改造的最佳之选 编程 语言推荐 clojure haskell 工具 shellcheck: 你的shell脚本老师 postgrest: pg数据的cp，直接提供restAPI Devops CI jenkins gerrit CD k8s Other airflow]]></content>
   </entry>
   <entry>
     <title><![CDATA[2018年度学习总结]]></title>
