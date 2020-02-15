@@ -8,8 +8,16 @@
     </url>
 
     <url>
+        <loc>http://www.rainmote.cn/2019/01/23/2018-learning-summay/</loc>
+        <lastmod>2020-02-15T04:44:30.254Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.6</priority>
+
+    </url>
+
+    <url>
         <loc>http://www.rainmote.cn/2019/09/12/current/</loc>
-        <lastmod>2020-02-13T15:11:03.792Z</lastmod>
+        <lastmod>2020-02-15T04:12:00.167Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 
@@ -18,14 +26,6 @@
     <url>
         <loc>http://www.rainmote.cn/2018/12/14/git-log-format-to-json/</loc>
         <lastmod>2019-09-12T00:14:57.045Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.6</priority>
-
-    </url>
-
-    <url>
-        <loc>http://www.rainmote.cn/2019/01/23/2018-learning-summay/</loc>
-        <lastmod>2019-09-11T17:15:39.156Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.6</priority>
 

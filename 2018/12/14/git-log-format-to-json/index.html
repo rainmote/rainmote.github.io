@@ -1,289 +1,82 @@
-<!DOCTYPE html>
-<html lang="zh-Hans">
-<head><meta name="generator" content="Hexo 3.8.0">
+<!DOCTYPE html><html lang="zh-CN"><head><meta name="generator" content="Hexo 3.8.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="keywords" content="rainmote, 雨中尘埃"><meta name="description" content="clojure爱好者 爱折腾IoT"><title>git log输出json格式</title><link rel="icon" href="/images/icons/favicon.ico?v=1.7.0" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/favicon.ico?v=1.7.0" type="image/png" sizes="32x32"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=1.7.0"><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  fontawesome: {"prefix":"fa"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":false},
+  post_widget: {"end_text":true},
+  night_mode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"carbon","highlight":"light","word_wrap":false},
+  reward: true,
+  fancybox: false,
+  zoom_image: {"enable":true,"mask_color":"rgba(0,0,0,0.6)"},
+  gallery_waterfall: undefined,
+  lazyload: undefined,
+  pjax: undefined,
+  external_link: {"icon":{"enable":true,"name":"external-link"}},
+  shortcuts: undefined,
+  prompt: {"copy_success":"复制成功","copy_error":"复制失败","creative_commons":"知识共享","copy_button":"复制"}
+};
 
-    <!--[if lt IE 9]>
-        <style>body {display: none; background: none !important} </style>
-        <meta http-equiv="Refresh" Content="0; url=//outdatedbrowser.com/" />
-    <![endif]-->
+window.CONFIG = CONFIG;</script></head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-btn fa fa-bars"></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__a" href="/"><i class="fa fa-home"></i>首页</a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__a" href="/archives/"><i class="fa fa-folder-open"></i>归档</a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__a" href="/categories/"><i class="fa fa-th"></i>分类</a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__a" href="/tags/"><i class="fa fa-tags"></i>标签</a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__a" href="/about/"><i class="fa fa-user"></i>关于</a></div></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-info"><div class="header-info-inner"><div class="header-info-title">雨中尘埃</div><div class="header-info-subtitle">吾生也有涯，而知也无涯</div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content"><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-header-title">git log输出json格式</h1><div class="post-header-meta"><span class="post-header-meta-create"><i class="fa fa-calendar-o"></i><span>发表于 </span><span>2018-12-14</span></span><span class="post-header-meta-update"><i class="fa fa-calendar-check-o"></i><span>更新于 </span><span>2019-09-12</span></span><span class="post-header-meta-reading-time"><i class="fa fa-clock-o"></i><span>阅读时长 </span><span>6m</span></span></div></header><div class="post-body">
+        <h1 id="背景">
+          <span class="heading-link">背景</span>
+        </h1>
+      <p>有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。<br><span class="external-link"><a href="https://git-scm.com/docs/git-log" target="_blank" rel="noopener">git-log文档</a><i class="fa fa-external-link"></i></span></p>
 
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="format-detection" content="telephone=no">
-<meta name="author" content="rainmote">
-
-
-
-<meta name="description" content="背景有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。git-log文档 实现本示例使用clojure实现，我们可以看到其简洁、优美之处。">
-<meta name="keywords" content="clojure,git,练习">
-<meta property="og:type" content="article">
-<meta property="og:title" content="git log输出json格式">
-<meta property="og:url" content="http://www.rainmote.cn/2018/12/14/git-log-format-to-json/index.html">
-<meta property="og:site_name" content="雨中尘埃">
-<meta property="og:description" content="背景有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。git-log文档 实现本示例使用clojure实现，我们可以看到其简洁、优美之处。">
-<meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-09-12T00:14:57.045Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="git log输出json格式">
-<meta name="twitter:description" content="背景有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。git-log文档 实现本示例使用clojure实现，我们可以看到其简洁、优美之处。">
-
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-
-    <link rel="alternate" href="/atom.xml" title="雨中尘埃" type="application/atom+xml">
-
-
-
-    <link rel="shortcut icon" href="/favicon.ico">
-
-
-
-    <link href="//cdn.bootcss.com/animate.css/3.5.1/animate.min.css" rel="stylesheet">
-
-
-
-    <link href="//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.css" rel="stylesheet">
-
-
-
-    <script src="//cdn.bootcss.com/pace/1.0.2/pace.min.js"></script>
-    <link href="//cdn.bootcss.com/pace/1.0.2/themes/blue/pace-theme-minimal.css" rel="stylesheet">
-
-
-<link rel="stylesheet" href="/css/style.css">
-
-
-
-<link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
-
-
-<title>git log输出json格式 | 雨中尘埃</title>
-
-<script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
-<script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
-
-<script>
-    var yiliaConfig = {
-        fancybox: true,
-        animate: true,
-        isHome: false,
-        isPost: true,
-        isArchive: false,
-        isTag: false,
-        isCategory: false,
-        fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
-        scrollreveal: "//cdn.bootcss.com/scrollReveal.js/3.1.4/scrollreveal.min.js",
-        search: true
-    }
-</script>
-
-
-    <script>
-        yiliaConfig.jquery_ui = [true, "//cdn.bootcss.com/jqueryui/1.10.4/jquery-ui.min.js", "//cdn.bootcss.com/jqueryui/1.10.4/css/jquery-ui.min.css"];
-    </script>
-
-
-
-    <script> yiliaConfig.rootUrl = "\/";</script>
-
-
-
-
-
-
-</head></html>
-<body>
-  <div id="container">
-    <div class="left-col">
-    <div class="overlay"></div>
-<div class="intrude-less">
-    <header id="header" class="inner">
-        <a href="/" class="profilepic">
-            <img src="/img/longmao_small.jpg" class="animated zoomIn">
-        </a>
-        <hgroup>
-          <h1 class="header-author"><a href="/">rainmote</a></h1>
-        </hgroup>
-
-        
-        <p class="header-subtitle">吾生也有涯，而知也无涯</p>
-        
-
-        
-            <form id="search-form">
-            <input type="text" id="local-search-input" name="q" placeholder="search..." class="search form-control" autocomplete="off" autocorrect="off" searchonload="false">
-            <i class="fa fa-times" onclick="resetSearch()"></i>
-            </form>
-            <div id="local-search-result"></div>
-            <p class="no-result">No results found <i class="fa fa-spinner fa-pulse"></i></p>
-        
-
-
-        
-
-        <div id="switch-area" class="switch-area">
-            <div class="switch-wrap">
-                <section class="switch-part switch-part1">
-                    <nav class="header-menu">
-                        <ul>
-                        
-                            <li><a href="/">主页</a></li>
-                        
-                            <li><a href="/archives/">所有文章</a></li>
-                        
-                            <li><a href="/tags/">标签云</a></li>
-                        
-                            <li><a href="/about/">关于我</a></li>
-                        
-                        </ul>
-                    </nav>
-                    <nav class="header-nav">
-                        <ul class="social">
-                            
-                                <a class="fa Email" href="mailto:rainmote@gmail.com" title="Email"></a>
-                            
-                                <a class="fa 新浪微博" href="https://weibo.com/u/6043347265" title="新浪微博"></a>
-                            
-                                <a class="fa GitHub" href="https://github.com/rainmote" title="GitHub"></a>
-                            
-                                <a class="fa RSS" href="/atom.xml" title="RSS"></a>
-                            
-                        </ul>
-                    </nav>
-                </section>
-                
-                
-                
-                
-                <section class="switch-part switch-part3">
-                    <div id="js-friends">
-                    
-                      <a class="main-nav-link switch-friends-link" href="https://hexo.io">Hexo</a>
-                    
-                      <a class="main-nav-link switch-friends-link" href="https://pages.github.com/">GitHub</a>
-                    
-                      <a class="main-nav-link switch-friends-link" href="http://moxfive.xyz/">MOxFIVE</a>
-                    
-                    </div>
-                </section>
-                
-
-                
-            </div>
-        </div>
-    </header>                
-</div>
-    </div>
-    <div class="mid-col">
-      <nav id="mobile-nav">
-      <div class="overlay">
-          <div class="slider-trigger"></div>
-          <h1 class="header-author js-mobile-header hide"><a href="/" title="回到主页">rainmote</a></h1>
-      </div>
-    <div class="intrude-less">
-        <header id="header" class="inner">
-            <a href="/" class="profilepic">
-                <img src="/img/longmao_small.jpg" class="animated zoomIn">
-            </a>
-            <hgroup>
-              <h1 class="header-author"><a href="/" title="回到主页">rainmote</a></h1>
-            </hgroup>
-            
-            <p class="header-subtitle">吾生也有涯，而知也无涯</p>
-            
-            <nav class="header-menu">
-                <ul>
-                
-                    <li><a href="/">主页</a></li>
-                
-                    <li><a href="/archives/">所有文章</a></li>
-                
-                    <li><a href="/tags/">标签云</a></li>
-                
-                    <li><a href="/about/">关于我</a></li>
-                
-                <div class="clearfix"></div>
-                </ul>
-            </nav>
-            <nav class="header-nav">
-                        <ul class="social">
-                            
-                                <a class="fa Email" target="_blank" href="mailto:rainmote@gmail.com" title="Email"></a>
-                            
-                                <a class="fa 新浪微博" target="_blank" href="https://weibo.com/u/6043347265" title="新浪微博"></a>
-                            
-                                <a class="fa GitHub" target="_blank" href="https://github.com/rainmote" title="GitHub"></a>
-                            
-                                <a class="fa RSS" target="_blank" href="/atom.xml" title="RSS"></a>
-                            
-                        </ul>
-            </nav>
-        </header>                
-    </div>
-    <link class="menu-list" tags="标签" friends="友情链接" about="关于我">
-</nav>
-      <div class="body-wrap"><article id="post-git-log-format-to-json" class="article article-type-post" itemscope="" itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="/2018/12/14/git-log-format-to-json/" class="article-date">
-      <time datetime="2018-12-14T00:02:30.000Z" itemprop="datePublished">2018-12-14</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="article-title" itemprop="name">
-      git log输出json格式
-    </h1>
-  
-
-      </header>
-      
-      <div class="article-info article-info-post">
-        
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/工具/">工具</a>
-    </div>
-
-
-        
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/clojure/">clojure</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/练习/">练习</a></li></ul>
-    </div>
-
-        <div class="clearfix"></div>
-      </div>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>有时我们需要分析git提交历史，而git log支持–format选项，无法直接输出json，所以需要自己包装下。<br><a href="https://git-scm.com/docs/git-log" target="_blank" rel="noopener">git-log文档</a></p>
-<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>本示例使用<code>clojure</code>实现，我们可以看到其简洁、优美之处。</p>
+        <h1 id="实现">
+          <span class="heading-link">实现</span>
+        </h1>
+      <p>本示例使用<code>clojure</code>实现，我们可以看到其简洁、优美之处。</p>
 <a id="more"></a>
-<h2 id="定义format选项"><a href="#定义format选项" class="headerlink" title="定义format选项"></a>定义format选项</h2><p>格式化参数可以参考git log文档，<br><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">defn</span></span> get-git-log-params []</span><br><span class="line">  &#123;<span class="symbol">:commit</span> <span class="string">"%H"</span></span><br><span class="line">   <span class="symbol">:abbreviated-commit</span> <span class="string">"%h"</span></span><br><span class="line">   <span class="symbol">:tree</span> <span class="string">"%T"</span></span><br><span class="line">   <span class="symbol">:abbreviated-tree</span> <span class="string">"%t"</span></span><br><span class="line">   <span class="symbol">:parent</span> <span class="string">"%P"</span></span><br><span class="line">   <span class="symbol">:abbreviated-parent</span> <span class="string">"%p"</span></span><br><span class="line">   <span class="symbol">:refs</span> <span class="string">"%D"</span></span><br><span class="line">   <span class="symbol">:encoding</span> <span class="string">"%e"</span></span><br><span class="line">   <span class="symbol">:subject</span> <span class="string">"%s"</span></span><br><span class="line">   <span class="symbol">:body</span> <span class="string">"%b"</span></span><br><span class="line">   <span class="symbol">:commit-notes</span> <span class="string">"%N"</span></span><br><span class="line">   <span class="symbol">:author-name</span> <span class="string">"%aN"</span></span><br><span class="line">   <span class="symbol">:author-email</span> <span class="string">"%aE"</span></span><br><span class="line">   <span class="symbol">:author-date</span> <span class="string">"%ai"</span></span><br><span class="line">   <span class="symbol">:author-timestamp</span> <span class="string">"%at"</span></span><br><span class="line">   <span class="symbol">:committer-name</span> <span class="string">"%cN"</span></span><br><span class="line">   <span class="symbol">:committer-email</span> <span class="string">"%cE"</span></span><br><span class="line">   <span class="symbol">:committer-date</span> <span class="string">"%ci"</span></span><br><span class="line">   <span class="symbol">:committer-timestamp</span> <span class="string">"%ct"</span>&#125;)</span><br></pre></td></tr></table></figure></p>
-<h2 id="格式化方式选择"><a href="#格式化方式选择" class="headerlink" title="格式化方式选择"></a>格式化方式选择</h2><p>我们需要格式化为json格式，format支持自定义格式，我们有两种方式可以选择：</p>
+
+        <h2 id="定义format选项">
+          <span class="heading-link">定义format选项</span>
+        </h2>
+      <p>格式化参数可以参考git log文档，<br><figure class="highlight clojure"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">defn</span></span> get-git-log-params []</span><br><span class="line">  &#123;<span class="symbol">:commit</span> <span class="string">"%H"</span></span><br><span class="line">   <span class="symbol">:abbreviated-commit</span> <span class="string">"%h"</span></span><br><span class="line">   <span class="symbol">:tree</span> <span class="string">"%T"</span></span><br><span class="line">   <span class="symbol">:abbreviated-tree</span> <span class="string">"%t"</span></span><br><span class="line">   <span class="symbol">:parent</span> <span class="string">"%P"</span></span><br><span class="line">   <span class="symbol">:abbreviated-parent</span> <span class="string">"%p"</span></span><br><span class="line">   <span class="symbol">:refs</span> <span class="string">"%D"</span></span><br><span class="line">   <span class="symbol">:encoding</span> <span class="string">"%e"</span></span><br><span class="line">   <span class="symbol">:subject</span> <span class="string">"%s"</span></span><br><span class="line">   <span class="symbol">:body</span> <span class="string">"%b"</span></span><br><span class="line">   <span class="symbol">:commit-notes</span> <span class="string">"%N"</span></span><br><span class="line">   <span class="symbol">:author-name</span> <span class="string">"%aN"</span></span><br><span class="line">   <span class="symbol">:author-email</span> <span class="string">"%aE"</span></span><br><span class="line">   <span class="symbol">:author-date</span> <span class="string">"%ai"</span></span><br><span class="line">   <span class="symbol">:author-timestamp</span> <span class="string">"%at"</span></span><br><span class="line">   <span class="symbol">:committer-name</span> <span class="string">"%cN"</span></span><br><span class="line">   <span class="symbol">:committer-email</span> <span class="string">"%cE"</span></span><br><span class="line">   <span class="symbol">:committer-date</span> <span class="string">"%ci"</span></span><br><span class="line">   <span class="symbol">:committer-timestamp</span> <span class="string">"%ct"</span>&#125;)</span><br></pre></td></tr></table></div></figure></p>
+
+        <h2 id="格式化方式选择">
+          <span class="heading-link">格式化方式选择</span>
+        </h2>
+      <p>我们需要格式化为json格式，format支持自定义格式，我们有两种方式可以选择：</p>
 <ol>
 <li><p>format参数直接包装为json格式<br>此种方式每个commit之后需要加个空格，最末尾的需要去除。<br>优点：直接得到json<br>缺点：某些字段内容包含引号，转义问题不容易解决</p>
 </li>
 <li><p>利用特殊分隔字符<br>我们将每个输出参数分隔，再将每个commit输出分隔，拿到输出后进行解析。<br>优点：不用考虑转义问题<br>缺点：实现略微复杂<br>不过我们利用<code>clojure</code>可以很方便实现。</p>
 </li>
 </ol>
-<h2 id="需要用的小知识点"><a href="#需要用的小知识点" class="headerlink" title="需要用的小知识点"></a>需要用的小知识点</h2><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;; 字符串切分</span></span><br><span class="line">user=&gt; (clojure.string/split "a#&amp;b#&amp;c" (re-pattern "#&amp;"))</span><br><span class="line">[<span class="string">"a"</span> <span class="string">"b"</span> <span class="string">"c"</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">;; key和value组合为map</span></span><br><span class="line">user=&gt; (into &#123;&#125; (mapv vector [:a :b :c] [1 2 3]))</span><br><span class="line">&#123;<span class="symbol">:a</span> <span class="number">1</span>, <span class="symbol">:b</span> <span class="number">2</span>, <span class="symbol">:c</span> <span class="number">3</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">;; map拆分为ks vs</span></span><br><span class="line">user=&gt; (apply mapv vector (seq *1))</span><br><span class="line">[[<span class="symbol">:a</span> <span class="symbol">:b</span> <span class="symbol">:c</span>] [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span>]]</span><br></pre></td></tr></table></figure>
-<h2 id="实现步骤"><a href="#实现步骤" class="headerlink" title="实现步骤"></a>实现步骤</h2><h3 id="定义分割符"><a href="#定义分割符" class="headerlink" title="定义分割符"></a>定义分割符</h3><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">def</span></span> magic-item <span class="string">"&amp;=&amp;=&amp;=&amp;=&amp;=&amp;="</span>)</span><br><span class="line">(<span class="name"><span class="builtin-name">def</span></span> magic-line <span class="string">"#@#@#@#@#@#@"</span>)</span><br></pre></td></tr></table></figure>
-<h3 id="拆分参数并构造命令"><a href="#拆分参数并构造命令" class="headerlink" title="拆分参数并构造命令"></a>拆分参数并构造命令</h3><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;; 这里用到了参数解构，线性宏</span></span><br><span class="line">(<span class="name"><span class="builtin-name">let</span></span> [[ks vs] (<span class="name"><span class="builtin-name">apply</span></span> mapv vector (<span class="name"><span class="builtin-name">seq</span></span> (<span class="name">get-git-log-params</span>)))]</span><br><span class="line">  (<span class="name"><span class="builtin-name">-&gt;</span></span> (<span class="name">clojure.string/join</span> magic-item vs)</span><br><span class="line">      (<span class="name"><span class="builtin-name">str</span></span> ,,, magic-line)</span><br><span class="line">      (<span class="name">#</span>(<span class="name"><span class="builtin-name">format</span></span> <span class="string">"git log remotes/origin/%s --format='%s'"</span> branch-name %) ,,,)))</span><br></pre></td></tr></table></figure>
-<h3 id="执行shell命令"><a href="#执行shell命令" class="headerlink" title="执行shell命令"></a>执行shell命令</h3><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">user=&gt; (require '[clojure.java.shell :as shell])</span><br><span class="line"><span class="literal">nil</span></span><br><span class="line">user=&gt; (-&gt;&gt; (shell/sh "bash" "-c" "date") :out)</span><br><span class="line"><span class="string">"Fri Dec 14 08:28:00 CST 2018\n"</span></span><br></pre></td></tr></table></figure>
+
+        <h2 id="需要用的小知识点">
+          <span class="heading-link">需要用的小知识点</span>
+        </h2>
+      <figure class="highlight clojure"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;; 字符串切分</span></span><br><span class="line">user=&gt; (clojure.string/split "a#&amp;b#&amp;c" (re-pattern "#&amp;"))</span><br><span class="line">[<span class="string">"a"</span> <span class="string">"b"</span> <span class="string">"c"</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment">;; key和value组合为map</span></span><br><span class="line">user=&gt; (into &#123;&#125; (mapv vector [:a :b :c] [1 2 3]))</span><br><span class="line">&#123;<span class="symbol">:a</span> <span class="number">1</span>, <span class="symbol">:b</span> <span class="number">2</span>, <span class="symbol">:c</span> <span class="number">3</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">;; map拆分为ks vs</span></span><br><span class="line">user=&gt; (apply mapv vector (seq *1))</span><br><span class="line">[[<span class="symbol">:a</span> <span class="symbol">:b</span> <span class="symbol">:c</span>] [<span class="number">1</span> <span class="number">2</span> <span class="number">3</span>]]</span><br></pre></td></tr></table></div></figure>
+
+        <h2 id="实现步骤">
+          <span class="heading-link">实现步骤</span>
+        </h2>
+      
+        <h3 id="定义分割符">
+          <span class="heading-link">定义分割符</span>
+        </h3>
+      <figure class="highlight clojure"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">def</span></span> magic-item <span class="string">"&amp;=&amp;=&amp;=&amp;=&amp;=&amp;="</span>)</span><br><span class="line">(<span class="name"><span class="builtin-name">def</span></span> magic-line <span class="string">"#@#@#@#@#@#@"</span>)</span><br></pre></td></tr></table></div></figure>
+
+        <h3 id="拆分参数并构造命令">
+          <span class="heading-link">拆分参数并构造命令</span>
+        </h3>
+      <figure class="highlight clojure"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">;; 这里用到了参数解构，线性宏</span></span><br><span class="line">(<span class="name"><span class="builtin-name">let</span></span> [[ks vs] (<span class="name"><span class="builtin-name">apply</span></span> mapv vector (<span class="name"><span class="builtin-name">seq</span></span> (<span class="name">get-git-log-params</span>)))]</span><br><span class="line">  (<span class="name"><span class="builtin-name">-&gt;</span></span> (<span class="name">clojure.string/join</span> magic-item vs)</span><br><span class="line">      (<span class="name"><span class="builtin-name">str</span></span> ,,, magic-line)</span><br><span class="line">      (<span class="name">#</span>(<span class="name"><span class="builtin-name">format</span></span> <span class="string">"git log remotes/origin/%s --format='%s'"</span> branch-name %) ,,,)))</span><br></pre></td></tr></table></div></figure>
+
+        <h3 id="执行shell命令">
+          <span class="heading-link">执行shell命令</span>
+        </h3>
+      <figure class="highlight clojure"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">user=&gt; (require '[clojure.java.shell :as shell])</span><br><span class="line"><span class="literal">nil</span></span><br><span class="line">user=&gt; (-&gt;&gt; (shell/sh "bash" "-c" "date") :out)</span><br><span class="line"><span class="string">"Fri Dec 14 08:28:00 CST 2018\n"</span></span><br></pre></td></tr></table></div></figure>
 <p>这里使用<code>bash -c</code>是个小技巧，后面的命令可以可以放在一个字符串中处理。</p>
-<h3 id="解析结果"><a href="#解析结果" class="headerlink" title="解析结果"></a>解析结果</h3><p>假设我们完成了上述步骤，将会得到如下格式的输出：<br><figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aaa&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=bbb&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=ccc#@#@#@#@#@#@<span class="number">123</span>&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=<span class="number">456</span>&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=<span class="number">789</span>\n</span><br></pre></td></tr></table></figure></p>
+
+        <h3 id="解析结果">
+          <span class="heading-link">解析结果</span>
+        </h3>
+      <p>假设我们完成了上述步骤，将会得到如下格式的输出：<br><figure class="highlight clean"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aaa&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=bbb&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=ccc#@#@#@#@#@#@<span class="number">123</span>&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=<span class="number">456</span>&amp;=&amp;=&amp;=&amp;=&amp;=&amp;=<span class="number">789</span>\n</span><br></pre></td></tr></table></div></figure></p>
 <p>我们需要按照如下步骤解析：</p>
 <ol>
 <li>删除末尾换行</li>
@@ -291,241 +84,35 @@
 <li>每行再按照列分隔符切分</li>
 <li>组合key和切分后的内容</li>
 </ol>
-<p>具体实现如下：<br><figure class="highlight clojure"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">-&gt;&gt;</span></span> (<span class="name">clojure.java.shell/sh</span> <span class="string">"bash"</span> <span class="string">"-c"</span></span><br><span class="line">                   (<span class="name"><span class="builtin-name">-&gt;</span></span> (<span class="name">clojure.string/join</span> magic-item vs)</span><br><span class="line">                       (<span class="name"><span class="builtin-name">str</span></span> ,,, magic-line)</span><br><span class="line">                       (<span class="name">#</span>(<span class="name"><span class="builtin-name">format</span></span> <span class="string">"git log remotes/origin/%s --format='%s'"</span> branch %) ,,,))</span><br><span class="line">                  <span class="symbol">:dir</span> code-path)</span><br><span class="line">     <span class="symbol">:out</span></span><br><span class="line">     clojure.string/trim-newline</span><br><span class="line">     <span class="comment">;; split output to line</span></span><br><span class="line">     (<span class="name">#</span>(<span class="name">clojure.string/split</span> % (<span class="name">re-pattern</span> magic-line)) ,,,)</span><br><span class="line">     <span class="comment">;; split line to item</span></span><br><span class="line">     (<span class="name"><span class="builtin-name">map</span></span> #(<span class="name">clojure.string/split</span> % (<span class="name">re-pattern</span> magic-item)) ,,,)</span><br><span class="line">     <span class="comment">;; combination ks and output into map</span></span><br><span class="line">     <span class="comment">;; [:a :b] [1 2] =&gt; &#123;:a 1 :b 2&#125;</span></span><br><span class="line">     (<span class="name"><span class="builtin-name">map</span></span> #(<span class="name"><span class="builtin-name">into</span></span> &#123;&#125; (<span class="name"><span class="builtin-name">mapv</span></span> vector ks %)) ,,,)</span><br><span class="line">     <span class="comment">;; convert to json</span></span><br><span class="line">     (<span class="name">cheshire.core/generate-string</span> ,,,))</span><br></pre></td></tr></table></figure></p>
+<p>具体实现如下：<br><figure class="highlight clojure"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">(<span class="name"><span class="builtin-name">-&gt;&gt;</span></span> (<span class="name">clojure.java.shell/sh</span> <span class="string">"bash"</span> <span class="string">"-c"</span></span><br><span class="line">                   (<span class="name"><span class="builtin-name">-&gt;</span></span> (<span class="name">clojure.string/join</span> magic-item vs)</span><br><span class="line">                       (<span class="name"><span class="builtin-name">str</span></span> ,,, magic-line)</span><br><span class="line">                       (<span class="name">#</span>(<span class="name"><span class="builtin-name">format</span></span> <span class="string">"git log remotes/origin/%s --format='%s'"</span> branch %) ,,,))</span><br><span class="line">                  <span class="symbol">:dir</span> code-path)</span><br><span class="line">     <span class="symbol">:out</span></span><br><span class="line">     clojure.string/trim-newline</span><br><span class="line">     <span class="comment">;; split output to line</span></span><br><span class="line">     (<span class="name">#</span>(<span class="name">clojure.string/split</span> % (<span class="name">re-pattern</span> magic-line)) ,,,)</span><br><span class="line">     <span class="comment">;; split line to item</span></span><br><span class="line">     (<span class="name"><span class="builtin-name">map</span></span> #(<span class="name">clojure.string/split</span> % (<span class="name">re-pattern</span> magic-item)) ,,,)</span><br><span class="line">     <span class="comment">;; combination ks and output into map</span></span><br><span class="line">     <span class="comment">;; [:a :b] [1 2] =&gt; &#123;:a 1 :b 2&#125;</span></span><br><span class="line">     (<span class="name"><span class="builtin-name">map</span></span> #(<span class="name"><span class="builtin-name">into</span></span> &#123;&#125; (<span class="name"><span class="builtin-name">mapv</span></span> vector ks %)) ,,,)</span><br><span class="line">     <span class="comment">;; convert to json</span></span><br><span class="line">     (<span class="name">cheshire.core/generate-string</span> ,,,))</span><br></pre></td></tr></table></div></figure></p>
 <blockquote>
 <p>我们将默认的map改用pmap，即可多核并行处理，clojure就是如此简单。</p>
 </blockquote>
-<h1 id="完整实现"><a href="#完整实现" class="headerlink" title="完整实现"></a>完整实现</h1><p>见 <a href="https://github.com/rainmote/blog-example/blob/master/git-log.clj" target="_blank" rel="noopener">https://github.com/rainmote/blog-example/blob/master/git-log.clj</a></p>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css">
-      
-    </div>
-    
-  </div>
-  
-    
-    <div class="copyright">
-        <p><span>本文标题:</span><a href="/2018/12/14/git-log-format-to-json/">git log输出json格式</a></p>
-        <p><span>文章作者:</span><a href="/" title="回到主页">rainmote</a></p>
-        <p><span>发布时间:</span>2018-12-14, 08:02:30</p>
-        <p><span>最后更新:</span>2019-09-12, 08:14:57</p>
-        <p>
-            <span>原始链接:</span><a class="post-url" href="/2018/12/14/git-log-format-to-json/" title="git log输出json格式">http://www.rainmote.cn/2018/12/14/git-log-format-to-json/</a>
-            <span class="copy-path" data-clipboard-text="原文: http://www.rainmote.cn/2018/12/14/git-log-format-to-json/　　作者: rainmote" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
-            <script> var clipboard = new Clipboard('.copy-path'); </script>
-        </p>
-        <p>
-            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="CC BY-NC-SA 4.0 International" target="_blank">"署名-非商用-相同方式共享 4.0"</a> 转载请保留原文链接及作者。
-        </p>
-    </div>
 
-
-
-    <nav id="article-nav">
-        
-            <div id="article-nav-newer" class="article-nav-title">
-                <a href="/2019/01/23/2018-learning-summay/">
-                    2018年度学习总结
-                </a>
-            </div>
-        
-        
-    </nav>
-
-  
-</article>
-
-    <div id="toc" class="toc-article">
-        <strong class="toc-title">文章目录</strong>
-        
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#背景"><span class="toc-number">1.</span> <span class="toc-text">背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实现"><span class="toc-number">2.</span> <span class="toc-text">实现</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义format选项"><span class="toc-number">2.1.</span> <span class="toc-text">定义format选项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#格式化方式选择"><span class="toc-number">2.2.</span> <span class="toc-text">格式化方式选择</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需要用的小知识点"><span class="toc-number">2.3.</span> <span class="toc-text">需要用的小知识点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现步骤"><span class="toc-number">2.4.</span> <span class="toc-text">实现步骤</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义分割符"><span class="toc-number">2.4.1.</span> <span class="toc-text">定义分割符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#拆分参数并构造命令"><span class="toc-number">2.4.2.</span> <span class="toc-text">拆分参数并构造命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行shell命令"><span class="toc-number">2.4.3.</span> <span class="toc-text">执行shell命令</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解析结果"><span class="toc-number">2.4.4.</span> <span class="toc-text">解析结果</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整实现"><span class="toc-number">3.</span> <span class="toc-text">完整实现</span></a></li></ol>
-        
-    </div>
-    <style>
-        .left-col .switch-btn,
-        .left-col .switch-area {
-            display: none;
-        }
-        .toc-level-3 i,
-        .toc-level-3 ol {
-            display: none !important;
-        }
-    </style>
-
-    <input type="button" id="tocButton" value="隐藏目录" title="点击按钮隐藏或者显示文章目录">
-
-    <script>
-        yiliaConfig.toc = ["隐藏目录", "显示目录", !!"false"];
-    </script>
-
-
-
-    
-<div class="share">
-    
-        <div class="bdsharebuttonbox">
-            <a href="#" class="fa fa-twitter bds_twi" data-cmd="twi" title="分享到推特"></a>
-            <a href="#" class="fa fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
-            <a href="#" class="fa fa-qq bds_sqq" data-cmd="sqq" title="分享给 QQ 好友"></a>
-            <a href="#" class="fa fa-files-o bds_copy" data-cmd="copy" title="复制网址"></a>
-            <a href="#" class="fa fa fa-envelope-o bds_mail" data-cmd="mail" title="通过邮件分享"></a>
-            <a href="#" class="fa fa-weixin bds_weixin" data-cmd="weixin" title="生成文章二维码"></a>
-            <a href="#" class="fa fa-share-alt bds_more" data-cmd="more"></a>
-        </div>
-        <script>
-            window._bd_share_config={
-                "common":{"bdSnsKey":{},"bdText":"git log输出json格式　| 雨中尘埃　","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];
-        </script>
-    
-
-    
-</div>
-
-
-
-
-
-
-
-    
-        <section id="comments">
-    <style> aside.comment-bar { margin: auto 30px; }</style>
-    <div id="disqus_thread"></div>
-    <script>
-        var disqus_config = function(){
-            this.page.url = 'http://www.rainmote.cn/2018/12/14/git-log-format-to-json/';
-            this.page.identifier = '2018/12/14/git-log-format-to-json/';
-        };
-        var loadComment = function(){
-            var d = document, s = d.createElement('script');
-            s.src = '//rainmote-cn.disqus.com/embed.js';
-            s.setAttribute('data-timestamp', +new Date());
-            (d.head || d.body).appendChild(s);
-        }
-    </script>
-    
-    <script> loadComment(); </script>
-
-</section>
-
-
-    
-
-
-
-
-    <div class="scroll" id="post-nav-button">
-        
-            <a href="/2019/01/23/2018-learning-summay/" title="上一篇: 2018年度学习总结">
-                <i class="fa fa-angle-left"></i>
-            </a>
-        
-
-        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
-
-        
-            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
-        
-    </div>
-
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2019/09/12/current/">技能树 & 项目状态</a></li><li class="post-list-item"><a class="post-list-link" href="/2019/01/23/2018-learning-summay/">2018年度学习总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/12/14/git-log-format-to-json/">git log输出json格式</a></li></ul>
-
-
-
-
-    <script>
-        
-    </script>
-</div>
-      <footer id="footer">
-    <div class="outer">
-        <div id="footer-info">
-            <div class="footer-left">
-                <i class="fa fa-copyright"></i> 
-                2018-2020 rainmote
-            </div>
-            <div class="footer-right">
-                <a href="http://hexo.io/" target="_blank" title="快速、简洁且高效的博客框架">Hexo</a>  Theme <a href="https://github.com/MOxFIVE/hexo-theme-yelee" target="_blank" title="简而不减 Hexo 双栏博客主题  v3.5">Yelee</a> by MOxFIVE <i class="fa fa-heart animated infinite pulse"></i>
-            </div>
-        </div>
-        
-            <div class="visit">
-                
-                    <span id="busuanzi_container_site_pv" style="display:none">
-                        <span id="site-visit" title="本站到访数"><i class="fa fa-user" aria-hidden="true"></i><span id="busuanzi_value_site_uv"></span>
-                        </span>
-                    </span>
-                
-                
-                    <span>| </span>
-                
-                
-                    <span id="busuanzi_container_page_pv" style="display:none">
-                        <span id="page-visit" title="本页阅读量"><i class="fa fa-eye animated infinite pulse" aria-hidden="true"></i><span id="busuanzi_value_page_pv"></span>
-                        </span>
-                    </span>
-                
-            </div>
-        
-    </div>
-</footer>
-    </div>
-    
-<script data-main="/js/main.js" src="//cdn.bootcss.com/require.js/2.2.0/require.min.js"></script>
-
-
-
-
-
-    <script type="text/x-mathjax-config">
-MathJax.Hub.Config({
-    tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
-        processEscapes: true,
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-    }
-});
-
-MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax(), i;
-    for(i=0; i < all.length; i += 1) {
-        all[i].SourceElement().parentNode.className += ' has-jax';                 
-    }       
-});
-</script>
-
-<script src="//cdn.bootcss.com/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-<div class="scroll" id="scroll">
-    <a href="#" title="返回顶部"><i class="fa fa-arrow-up"></i></a>
-    <a href="#comments" onclick="load$hide();" title="查看评论"><i class="fa fa-comments-o"></i></a>
-    <a href="#footer" title="转到底部"><i class="fa fa-arrow-down"></i></a>
-</div>
-<script>
-    // Open in New Window
-    
-        var oOpenInNew = {
-            
-            
-            
-            
-            
-            
-             archives: ".archive-article-title", 
-             miniArchives: "a.post-list-link", 
-            
-             friends: "#js-friends a", 
-             socail: ".social a" 
-        }
-        for (var x in oOpenInNew) {
-            $(oOpenInNew[x]).attr("target", "_blank");
-        }
-    
-</script>
-
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js">
-</script>
-  </div>
-</body>
-</html>
+        <h1 id="完整实现">
+          <span class="heading-link">完整实现</span>
+        </h1>
+      <p>见 <span class="external-link"><a href="https://github.com/rainmote/blog-example/blob/master/git-log.clj" target="_blank" rel="noopener">https://github.com/rainmote/blog-example/blob/master/git-log.clj</a><i class="fa fa-external-link"></i></span></p>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css"></div><footer class="post-footer"><div class="post-end"><p><span>------ </span><span>本文结束，感谢您的阅读</span><span> ------</span></p></div><div class="post-copyright"><div class="post-copyright-author"><span class="post-copyright-author-name">本文作者: </span><span class="post-copyright-author-value"><a href="http://www.rainmote.cn">rainmote</a></span></div><div class="post-copyright-link"><span class="post-copyright-link-name">本文链接: </span><span class="post-copyright-link-value"><a href="http://www.rainmote.cn/2018/12/14/git-log-format-to-json/">http://www.rainmote.cn/2018/12/14/git-log-format-to-json/</a></span></div><div class="post-copyright-notice"><span class="post-copyright-notice-name">版权声明: </span><span class="post-copyright-notice-value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><i class="post-tags-item__i fa fa-tags"></i><a class="post-tags-item__a" href="http://www.rainmote.cn/tags/clojure/">clojure</a></span><span class="post-tags-item"><i class="post-tags-item__i fa fa-tags"></i><a class="post-tags-item__a" href="http://www.rainmote.cn/tags/git/">git</a></span><span class="post-tags-item"><i class="post-tags-item__i fa fa-tags"></i><a class="post-tags-item__a" href="http://www.rainmote.cn/tags/练习/">练习</a></span></div><div class="reward"><div class="reward-button">请我喝杯咖啡~</div><div class="reward-qr"><span class="reward-qr-alipay"><img class="reward-qr-alipay__img"><div class="reward-qr-alipay-text">支付宝打赏</div></span><span class="reward-qr-wechat"><img class="reward-qr-wechat__img" src="/images/wechat.jpg"><div class="reward-qr-wechat-text">微信打赏</div></span></div></div><nav class="paginator"><div class="paginator-post"><div class="paginator-post-prev"><a href="/2019/01/23/2018-learning-summay/"><i class="fa fa-chevron-left"></i><span>2018年度学习总结</span></a></div></div></nav></footer></div></div></div><aside class="sidebar" id="sidebar"><div class="sidebar-inner"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#背景"><span class="toc-number">1.</span> <span class="toc-text">
+          背景
+        </span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实现"><span class="toc-number">2.</span> <span class="toc-text">
+          实现
+        </span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#定义format选项"><span class="toc-number">2.1.</span> <span class="toc-text">
+          定义format选项
+        </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#格式化方式选择"><span class="toc-number">2.2.</span> <span class="toc-text">
+          格式化方式选择
+        </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#需要用的小知识点"><span class="toc-number">2.3.</span> <span class="toc-text">
+          需要用的小知识点
+        </span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实现步骤"><span class="toc-number">2.4.</span> <span class="toc-text">
+          实现步骤
+        </span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#定义分割符"><span class="toc-number">2.4.1.</span> <span class="toc-text">
+          定义分割符
+        </span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#拆分参数并构造命令"><span class="toc-number">2.4.2.</span> <span class="toc-text">
+          拆分参数并构造命令
+        </span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行shell命令"><span class="toc-number">2.4.3.</span> <span class="toc-text">
+          执行shell命令
+        </span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解析结果"><span class="toc-number">2.4.4.</span> <span class="toc-text">
+          解析结果
+        </span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#完整实现"><span class="toc-number">3.</span> <span class="toc-text">
+          完整实现
+        </span></a></li></ol></div></section><!-- ov = overview --><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/images/avatar.jpg" alt="avatar"></div><p class="sidebar-ov-author__p">雨中尘埃</p></div><div class="sidebar-ov-social"><a class="sidebar-ov-social__item" href="https://github.com/rainmote" target="_blank" rel="noopener" data-popover="social.GitHub" data-popover-pos="none"><i class="sidebar-ov-social__item--icon fa fa-github"></i><span>GitHub</span></a><a class="sidebar-ov-social__item" href="https://weibo.com/u/6043347265" target="_blank" rel="noopener" data-popover="social.微博" data-popover-pos="none"><i class="sidebar-ov-social__item--icon fa fa-weibo"></i><span>微博</span></a><a class="sidebar-ov-social__item" href="mailto:rainmote@gmail.com" target="_blank" rel="noopener" data-popover="social.Email" data-popover-pos="none"><i class="sidebar-ov-social__item--icon fa fa-envelope"></i><span>Email</span></a></div><div class="sidebar-ov-feed"><span class="sidebar-ov-feed-email"><a class="sidebar-ov-feed-email__a" href="rainmote@gmail.com" target="_blank" rel="noopener"><i class="sidebar-ov-feed-email__a--icon fa fa-envelope"></i><span>Email </span><span>订阅</span></a></span></div><div class="sidebar-ov-state"><a class="sidebar-ov-state__a posts" href="/archives/"><div class="sidebar-ov-state__a--count">3</div><div class="sidebar-ov-state__a--name">归档</div></a><a class="sidebar-ov-state__a categories" href="/categories/"><div class="sidebar-ov-state__a--count">2</div><div class="sidebar-ov-state__a--name">分类</div></a><a class="sidebar-ov-state__a tags" href="/tags/"><div class="sidebar-ov-state__a--count">4</div><div class="sidebar-ov-state__a--name">标签</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg" alt="知识共享"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span>你已阅读了 </span><span class="sidebar-reading-info-num">0</span></div><div class="sidebar-reading-line"></div></div></div></aside><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright &copy; 2020</span><span class="fa fa-heart footer-icon"></span><span>rainmote.</span></div><div><span>由 <a href="http://hexo.io/" title="hexo" target="_blank" rel="noopener">hexo</a> 强力驱动</span><span> v3.8.0.</span><span class="separator">|</span><span>主题 - <a href="https://github.com/liuyib/hexo-theme-stun/" title="stun" target="_blank" rel="noopener">stun</a></span><span> v1.7.0.</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="progress"></div></div><div class="back2top" id="back2top"><i class="back2top-icon fa fa-rocket"></i></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="/js/utils.js?v=1.7.0"></script><script src="/js/stun-boot.js?v=1.7.0"></script><script src="/js/scroll.js?v=1.7.0"></script><script src="/js/header.js?v=1.7.0"></script><script src="/js/sidebar.js?v=1.7.0"></script></body></html>
