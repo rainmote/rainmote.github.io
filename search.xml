@@ -3,7 +3,7 @@
   <entry>
     <title><![CDATA[路漫漫其修远兮，吾将上下而求索]]></title>
     <url>%2F2019%2F09%2F12%2Fcurrent%2F</url>
-    <content type="text"><![CDATA[我的探索值得你了解的工具Marp: 使用markdown写pptGraphEasy: 生成ascii流程图，很酷且高效Notion: 迄今为止最好用的笔记软件Anytype: 仿照notion，以web3为基础，开源，可私有部署Hammerspoon: MAC上强大的自动化工具使用lua封装了系统层api，可以非常简单、高效实现自动化功能包括且不限于：窗口管理（多屏幕移动）剪贴板全局快捷键自动化脚本控制wifi/蓝牙dock显示信息，资讯/githubPR/天气预报……可以让你少买很多软件;用了就无法自拔的神器spacehammer: 一个好用的Hammerspoon的配置库使用仿clojure的Fennel语言编写，利用Lisp强大的表达能力，语法非常简洁优美仿spacemacs的操作方式，上手十分简单，处处有提示Kodi: 家庭影音中心可以配置直播源，有网就能看电视，可以配置全球电视源可以集成app，直接访问网络资源，如优酷，百度云等Mac上安装，局域网看视频；支持丰富的视频格式一个树莓派，让普通电视智能化智能家居NASHomeAssistant硬件设备小米系列峥果：浴霸,墙壁开关改造的最佳之选编程语言推荐clojurehaskell工具shellcheck: 你的shell脚本老师postgrest: pg数据的cp，直接提供restAPIDevopsCIjenkinsgerritCDk8sOtherairflow 我的状态 2020年 01月 智能家居 将峥果浴霸刷上开源的固件，接入homeassistant；单火墙壁开关固件dump出来，尝试分析小米万能遥控器音箱，拆卸找到ttl，无法用过ttl进入shell，可能封堵了串口gettty，待继续探索解决方案春节~.~ 02月 效率工具 Mac升级，键盘映射失效，shift切换中英文失效，折腾时顺便捡起了hammerspoon；spacehammer真是相见很晚的库，可以用“Clojure”来写mac自动化工具，兴奋至极！]]></content>
+    <content type="text"><![CDATA[我的探索值得你了解的工具Marp: 使用markdown写pptGraphEasy: 生成ascii流程图，很酷且高效Notion: 迄今为止最好用的笔记软件Anytype: 仿照notion，以web3为基础，开源，可私有部署Hammerspoon: MAC上强大的自动化工具使用lua封装了系统层api，可以非常简单、高效实现自动化功能包括且不限于：窗口管理（多屏幕移动）剪贴板全局快捷键自动化脚本控制wifi/蓝牙dock显示信息，资讯/githubPR/天气预报……可以让你少买很多软件;用了就无法自拔的神器spacehammer: 一个好用的Hammerspoon的配置库使用仿clojure的Fennel语言编写，利用Lisp强大的表达能力，语法非常简洁优美仿spacemacs的操作方式，上手十分简单，处处有提示Kodi: 家庭影音中心可以配置直播源，有网就能看电视，可以配置全球电视源可以集成app，直接访问网络资源，如优酷，百度云等Mac上安装，局域网看视频；支持丰富的视频格式一个树莓派，让普通电视智能化智能家居NASHomeAssistant硬件设备小米系列峥果：浴霸,墙壁开关改造的最佳之选编程语言推荐clojurehaskell工具shellcheck: 你的shell脚本老师postgrest: pg数据的cp，直接提供restAPIDevopsCIjenkinsgerritCDk8sOtherairflow 我的状态 2020年 01月 智能家居 将峥果浴霸刷上开源的固件，接入homeassistant；单火墙壁开关固件dump出来，尝试分析小米万能遥控器音箱，拆卸找到ttl，无法用过ttl进入shell，可能封堵了串口gettty，待继续探索解决方案春节~.~ 02月 效率工具 Mac升级，键盘映射失效，shift切换中英文失效，折腾时顺便捡起了hammerspoon；spacehammer真是相见很晚的库，可以用“Clojure”来写mac自动化工具，兴奋至极！ 03月 小米音箱万能遥控版折腾 年前沟通了一台本来打算接入homeassistant，奈何网上都是小爱版，没有带红外功能的；拆解ttl连接无法进入shell，从信息可以得到芯片是全志A33，尝试从FEL模式提取固件失败。]]></content>
   </entry>
   <entry>
     <title><![CDATA[2018年度学习总结]]></title>
@@ -30,14 +30,14 @@
       </tags>
   </entry>
   <entry>
+    <title><![CDATA[about]]></title>
+    <url>%2Fabout%2Findex.html</url>
+    <content type="text"><![CDATA[联系方式 微信: rain_mote邮箱: rainmote@gmail.com 个人简介 对技术有强烈好奇心，喜欢折腾，热衷IoT、安全毕业后先从事分布式存储相关工作4年，之后从事偏IoT、业务相关工作；有丰富的Devops、工程效能建设经验；喜欢函数式编程，能够Clojure完成日常编程需求；拥有快学学习新知识的能力，有探索精神； 寻找志同道合的小伙伴 如果你喜欢Clojure如果你喜欢折腾HomeAssistant如果你喜欢DIY/逆向/折腾 IoT设备如果你喜欢折腾Kodi如果你喜欢用Hammerspoon写MAC自动化小工具……欢迎与我联系，一起交流、讨论、学习。]]></content>
+  </entry>
+  <entry>
     <title><![CDATA[标签]]></title>
     <url>%2Ftags%2Findex.html</url>
     <content type="text"><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title><![CDATA[about]]></title>
-    <url>%2Fabout%2Findex.html</url>
-    <content type="text"><![CDATA[Name rainmote]]></content>
   </entry>
   <entry>
     <title><![CDATA[分类]]></title>

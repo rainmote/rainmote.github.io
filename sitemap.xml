@@ -2,16 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://www.rainmote.cn/2019/01/23/2018-learning-summay/</loc>
+    <loc>http://www.rainmote.cn/about/index.html</loc>
     
-    <lastmod>2020-02-15T04:44:30.254Z</lastmod>
+    <lastmod>2020-03-26T16:24:26.225Z</lastmod>
     
   </url>
   
   <url>
     <loc>http://www.rainmote.cn/2019/09/12/current/</loc>
     
-    <lastmod>2020-02-15T04:12:00.167Z</lastmod>
+    <lastmod>2020-03-26T16:24:26.224Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://www.rainmote.cn/2019/01/23/2018-learning-summay/</loc>
+    
+    <lastmod>2020-02-15T04:44:30.254Z</lastmod>
     
   </url>
   
@@ -26,13 +33,6 @@
     <loc>http://www.rainmote.cn/categories/index.html</loc>
     
     <lastmod>2019-09-11T16:44:31.902Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://www.rainmote.cn/about/index.html</loc>
-    
-    <lastmod>2018-12-18T09:25:36.000Z</lastmod>
     
   </url>
   
