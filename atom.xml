@@ -33,9 +33,9 @@
     <category term="python" scheme="http://www.rainmote.cn/categories/python/"/>
     
     
-    <category term="python" scheme="http://www.rainmote.cn/tags/python/"/>
-    
     <category term="编程" scheme="http://www.rainmote.cn/tags/%E7%BC%96%E7%A8%8B/"/>
+    
+    <category term="python" scheme="http://www.rainmote.cn/tags/python/"/>
     
     <category term="upsource" scheme="http://www.rainmote.cn/tags/upsource/"/>
     
@@ -96,11 +96,11 @@
     <category term="工具" scheme="http://www.rainmote.cn/categories/%E5%B7%A5%E5%85%B7/"/>
     
     
-    <category term="编程" scheme="http://www.rainmote.cn/tags/%E7%BC%96%E7%A8%8B/"/>
-    
     <category term="clojure" scheme="http://www.rainmote.cn/tags/clojure/"/>
     
     <category term="git" scheme="http://www.rainmote.cn/tags/git/"/>
+    
+    <category term="编程" scheme="http://www.rainmote.cn/tags/%E7%BC%96%E7%A8%8B/"/>
     
   </entry>
   
