@@ -1,0 +1,392 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="/images/icons/favicon-16x16.ico?v=2.6.2" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/favicon-32x32.ico?v=2.6.2" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png?v=2.6.2" sizes="180x180"><link rel="mask-icon" href="/images/icons/apple-touch-icon.png?v=2.6.2" color="#54bcff"><meta name="msapplication-TileImage" content="/images/icons/favicon.png"><meta name="msapplication-TileColor" content="#000000"><meta name="google-site-verification" content="1TvdRqt6ID-jrB0QcBvzPs7TL8gomTrCoTDsI6CxqkY"><meta name="description" content="Linux终端需要做模拟人工输入，或一些自动化交互时可以使用Expect脚本实现，本文主要介绍其基本用法和经过探索总结的技巧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux使用Expect做自动化交互">
+<meta property="og:url" content="http://www.rainmote.cn/2021/08/23/linux-expect-automated-interaction/index.html">
+<meta property="og:site_name" content="雨中尘埃">
+<meta property="og:description" content="Linux终端需要做模拟人工输入，或一些自动化交互时可以使用Expect脚本实现，本文主要介绍其基本用法和经过探索总结的技巧">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-08-23T03:02:19.000Z">
+<meta property="article:modified_time" content="2021-08-23T03:53:51.699Z">
+<meta property="article:author" content="rainmote">
+<meta property="article:tag" content="自动化">
+<meta property="article:tag" content="效率">
+<meta property="article:tag" content="Devops">
+<meta property="article:tag" content="Linux">
+<meta name="twitter:card" content="summary"><title>Linux使用Expect做自动化交互 | 雨中尘埃</title><link ref="canonical" href="http://www.rainmote.cn/2021/08/23/linux-expect-automated-interaction/"><link rel="alternate" href="/atom.xml" type="application/atom+xml"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.6.2"><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement('script');
+  hm.src = 'https://hm.baidu.com/hm.js?1d29d8a4c1690c192a6fc1da4d1be771';
+  hm.async = true;
+
+  if (false) {
+    hm.setAttribute('data-pjax', '');
+  }
+  var s = document.getElementsByTagName('script')[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  assistSearch: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":false},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"light","wordWrap":false},
+  reward: true,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: undefined,
+  lazyload: false,
+  pjax: undefined,
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
+
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 5.4.0"></head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/archives/"><span class="header-nav-menu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-menu-item__text">归档</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/categories/"><span class="header-nav-menu-item__icon"><i class="fas fa-th"></i></span><span class="header-nav-menu-item__text">分类</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/tags/"><span class="header-nav-menu-item__icon"><i class="fas fa-tags"></i></span><span class="header-nav-menu-item__text">标签</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/about/"><span class="header-nav-menu-item__icon"><i class="fas fa-user"></i></span><span class="header-nav-menu-item__text">关于</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" target="_blank" rel="noopener" href="https://www.cnblogs.com/rainmote/"><span class="header-nav-menu-item__icon"><i class="fas fa-link"></i></span><span class="header-nav-menu-item__text">博客园</span></a></div></div><div class="header-nav-search"><span class="header-nav-search__icon"><i class="fas fa-search"></i></span><span class="header-nav-search__text">搜索</span></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">雨中尘埃</div><div class="header-banner-info__subtitle">吾生也有涯，而知也无涯</div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">Linux使用Expect做自动化交互</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2021-08-23</span></span><span class="post-meta-item post-meta-item--readtime"><span class="post-meta-item__icon"><i class="far fa-clock"></i></span><span class="post-meta-item__info">阅读时长</span><span class="post-meta-item__value">7分</span></span></div></header><div class="post-body">
+        <h1 id="背景"   >
+          <a href="#背景" class="heading-link"><i class="fas fa-link"></i></a><a href="#背景" class="headerlink" title="背景"></a>背景</h1>
+      <p>在Linux进行ssh多次登录，sudo输入切换用户，打开screen/tmux时需要多次输入重复命令，思考如何解决重复性输入问题，经过探索找到了Expect脚本，其主要是用TCL语法（在网络仿真模拟中有用到过）。本文主要真对上述场景遇到的问题和基本语法做介绍，另外读者可以通过给出的资料文档进一步探索。</p>
+
+        <h1 id="简介"   >
+          <a href="#简介" class="heading-link"><i class="fas fa-link"></i></a><a href="#简介" class="headerlink" title="简介"></a>简介</h1>
+      <p>维基百科: <span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Expect" >Expect</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span><br>SourceForge: <span class="exturl"><a class="exturl__link"   target="_blank" rel="noopener" href="http://expect.sourceforge.net/" >The Expect Home Page</a><span class="exturl__icon"><i class="fas fa-external-link-alt"></i></span></span></p>
+
+        <h1 id="TCL语法"   >
+          <a href="#TCL语法" class="heading-link"><i class="fas fa-link"></i></a><a href="#TCL语法" class="headerlink" title="TCL语法"></a>TCL语法</h1>
+      <p>由于Expect是建立在TCL语言基础上的一个工具，首先看一些TCL常见语法。</p>
+
+        <h2 id="变量"   >
+          <a href="#变量" class="heading-link"><i class="fas fa-link"></i></a><a href="#变量" class="headerlink" title="变量"></a>变量</h2>
+      <p>一般用于保存hostname/username/password</p>
+<figure class="highlight bash"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义一个变量</span></span><br><span class="line"><span class="built_in">set</span> username <span class="string">&quot;leo&quot;</span></span><br><span class="line"><span class="built_in">set</span> hostname <span class="string">&quot;domain.local&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取命令行参数(与bash不同的是第一个参数index为0)</span></span><br><span class="line"><span class="comment">## 获取第一个参数</span></span><br><span class="line"><span class="built_in">set</span> hostname [lindex <span class="variable">$argv</span> 0]</span><br><span class="line"><span class="comment">## 获取第二个参数</span></span><br><span class="line"><span class="built_in">set</span> passwrod [lindex <span class="variable">$argv</span> 1]</span><br></pre></td></tr></table></div></figure>
+
+
+        <h2 id="数组"   >
+          <a href="#数组" class="heading-link"><i class="fas fa-link"></i></a><a href="#数组" class="headerlink" title="数组"></a>数组</h2>
+      <p>一般用于保存服务器列表，显示并供用户选择</p>
+<figure class="highlight bash"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 定义一个数组</span></span><br><span class="line"><span class="built_in">set</span> host_list(0) &#123;host1 127.0.0.1 root&#125;</span><br><span class="line"><span class="built_in">set</span> host_list(1) &#123;host2 192.168.1.1 admin&#125;</span><br><span class="line"><span class="built_in">set</span> host_list(2) &#123;host3 8.8.8.8 dns&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取数组长度</span></span><br><span class="line"><span class="built_in">set</span> arrlen [array size host_list]</span><br></pre></td></tr></table></div></figure>
+
+
+        <h2 id="获取用户输入"   >
+          <a href="#获取用户输入" class="heading-link"><i class="fas fa-link"></i></a><a href="#获取用户输入" class="headerlink" title="获取用户输入"></a>获取用户输入</h2>
+      <p>一般用于接收用户输入选择，如密码、服务器等</p>
+<figure class="highlight bash"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 关闭终端回显，用于保证输入密码安全</span></span><br><span class="line">system stty -<span class="built_in">echo</span></span><br><span class="line"><span class="comment"># 发送给用户，提示输入密码</span></span><br><span class="line">send_user <span class="string">&quot;please input password:&quot;</span></span><br><span class="line"><span class="comment"># 获取用户输入</span></span><br><span class="line">expect_user -re <span class="string">&quot;(.*)\n&quot;</span></span><br><span class="line"><span class="comment"># 将用户输入存入变量</span></span><br><span class="line"><span class="built_in">set</span> password <span class="variable">$expect_out</span>(1, string)</span><br><span class="line"><span class="comment"># 打开终端回显</span></span><br><span class="line">system stty <span class="built_in">echo</span></span><br></pre></td></tr></table></div></figure>
+
+
+        <h2 id="if条件分支"   >
+          <a href="#if条件分支" class="heading-link"><i class="fas fa-link"></i></a><a href="#if条件分支" class="headerlink" title="if条件分支"></a>if条件分支</h2>
+      <p>用于逻辑判断</p>
+<figure class="highlight bash"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 判断变量是否相等，相等返回0，否则返回1</span></span><br><span class="line">[string compare <span class="variable">$host</span> <span class="string">&quot;123&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取第一个参数</span></span><br><span class="line"><span class="built_in">set</span> host [lindex <span class="variable">$argv</span> 0]</span><br><span class="line"><span class="keyword">if</span> ![string compare <span class="variable">$host</span> <span class="string">&quot;&quot;</span>] &#123; <span class="comment">#注意化括号前必须有一个空格，具体参考TCL语言规范</span></span><br><span class="line">  <span class="comment"># 如果host变量为空字符串</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">expect_user -re <span class="string">&quot;(.*)\n&quot;</span></span><br><span class="line"><span class="built_in">set</span> choose <span class="variable">$expect_out</span>(1,string)</span><br><span class="line"><span class="keyword">if</span> &#123;[string compare [string toupper <span class="variable">$choose</span>] <span class="string">&quot;N&quot;</span>] == 0&#125; &#123;</span><br><span class="line">  <span class="comment"># 如果choose变量为&quot;N&quot;</span></span><br><span class="line">  <span class="built_in">exit</span></span><br><span class="line">&#125; elseif &#123;[scan <span class="variable">$choose</span> &#123;%[0-9]&#125; choose] == 0&#125; &#123;</span><br><span class="line">  <span class="comment"># 如果choose不是数字，scan用户匹配，详情参考TCL语法</span></span><br><span class="line">  <span class="built_in">exit</span></span><br><span class="line">&#125; elseif &#123; <span class="variable">$choose</span> &lt; 0 || <span class="variable">$choose</span> &gt;= <span class="variable">$len</span> &#125; &#123;</span><br><span class="line">  <span class="comment"># 输入非法，退出</span></span><br><span class="line">  <span class="built_in">exit</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></div></figure>
+
+
+        <h2 id="for循环"   >
+          <a href="#for循环" class="heading-link"><i class="fas fa-link"></i></a><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h2>
+      <figure class="highlight bash"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> len [array size host_list]</span><br><span class="line"><span class="keyword">for</span> &#123;<span class="built_in">set</span> index 0&#125; &#123;<span class="variable">$index</span> &lt; <span class="variable">$len</span>&#125; &#123;incr index&#125; &#123;</span><br><span class="line">  puts <span class="string">&quot;<span class="variable">$index</span> -&gt; <span class="variable">$host_list</span>(<span class="variable">$index</span>)&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># incr为自增关键字，puts用于输出给用户，类似send_user</span></span><br></pre></td></tr></table></div></figure>
+
+
+
+        <h1 id="Expect应用介绍"   >
+          <a href="#Expect应用介绍" class="heading-link"><i class="fas fa-link"></i></a><a href="#Expect应用介绍" class="headerlink" title="Expect应用介绍"></a>Expect应用介绍</h1>
+      
+        <h2 id="接受窗口改变信号"   >
+          <a href="#接受窗口改变信号" class="heading-link"><i class="fas fa-link"></i></a><a href="#接受窗口改变信号" class="headerlink" title="接受窗口改变信号"></a>接受窗口改变信号</h2>
+      <p>如果是用expect登录后，是用screen或tmux，在用户终端大小调整情况下，因为窗口大小改变信号为同步到远程服务器会导致内容错乱。</p>
+<figure class="highlight bash"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">trap</span> &#123;</span><br><span class="line">  <span class="built_in">set</span> rows [stty rows]</span><br><span class="line">  <span class="built_in">set</span> cols [stty columns]</span><br><span class="line">  stty rows <span class="variable">$rows</span> columns <span class="variable">$cols</span> &lt; <span class="variable">$spawn_out</span>(slave,name)</span><br><span class="line">&#125; WINCH</span><br></pre></td></tr></table></div></figure>
+
+
+        <h2 id="ssh自动登录"   >
+          <a href="#ssh自动登录" class="heading-link"><i class="fas fa-link"></i></a><a href="#ssh自动登录" class="headerlink" title="ssh自动登录"></a>ssh自动登录</h2>
+      <figure class="highlight bash"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置timeout时间为10秒</span></span><br><span class="line"><span class="built_in">set</span> timeout 10</span><br><span class="line"></span><br><span class="line"><span class="comment"># 执行ssh命令,登录远程服务器</span></span><br><span class="line">spawn ssh <span class="variable">$username</span>@<span class="variable">$hostname</span></span><br><span class="line"><span class="comment"># 匹配服务器返回的信息</span></span><br><span class="line">expect &#123;</span><br><span class="line">  <span class="string">&quot;yes/no&quot;</span> &#123; send <span class="string">&quot;yes\r&quot;</span>; exp_continue &#125;</span><br><span class="line">  <span class="string">&quot;passsword&quot;</span> &#123; send <span class="string">&quot;<span class="variable">$password</span>\r&quot;</span>; exp_continue &#125;</span><br><span class="line">  <span class="string">&quot;$&quot;</span> &#123; send <span class="string">&quot;hostname\r&quot;</span> &#125; <span class="comment"># 登录后发送hostname，用于debug</span></span><br><span class="line">  <span class="string">&quot;Permission denied&quot;</span> &#123; send_user <span class="string">&quot;Permission denied (publickey,password).&quot;</span>; <span class="built_in">exit</span> &#125;</span><br><span class="line">  incorrent &#123; puts <span class="string">&quot;Invalid account or password!&quot;</span>; <span class="built_in">exit</span> &#125;</span><br><span class="line">  timeout &#123; puts <span class="string">&quot;Connection to <span class="variable">$hostname</span> timeout!&quot;</span>; <span class="built_in">exit</span> &#125;</span><br><span class="line">  eof &#123; puts <span class="string">&quot;Connection to <span class="variable">$hostname</span> failed: <span class="variable">$expect_out</span>(buffer)&quot;</span>; <span class="built_in">exit</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查是否登录成功</span></span><br><span class="line">expect &#123;</span><br><span class="line">  <span class="string">&quot;\\\$&quot;</span> &#123; send <span class="string">&quot;whoami\r&quot;</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录screen</span></span><br><span class="line">sleep 0.2</span><br><span class="line">send <span class="string">&quot;script /dev/null\r&quot;</span></span><br><span class="line">expect <span class="string">&quot;Script started&quot;</span></span><br><span class="line">sleep 0.2</span><br><span class="line">send <span class="string">&quot;screen -ls\r&quot;</span></span><br><span class="line">expect &#123;</span><br><span class="line">  -re <span class="string">&quot;.*Detached&quot;</span> &#123; send <span class="string">&quot;screen -r <span class="variable">$username</span>\r&quot;</span> &#125;</span><br><span class="line">  -re <span class="string">&quot;.*Attached&quot;</span> &#123; send <span class="string">&quot;screen -x <span class="variable">$username</span>\r&quot;</span> &#125;</span><br><span class="line">  -re <span class="string">&quot;/var/run/screen&quot;</span> &#123; send <span class="string">&quot;screen -dmS <span class="variable">$username</span>; screen -r <span class="variable">$username</span>\r&quot;</span> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 登录后的环境直接交给用户</span></span><br><span class="line">interact</span><br></pre></td></tr></table></div></figure>
+<blockquote>
+<p>exp_continue可以理解为for/while的continue，Expect可以看作重新执行expect匹配</p>
+</blockquote>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css"></div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">本文作者: </span><span class="copyright-author__value"><a href="http://www.rainmote.cn">rainmote</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="http://www.rainmote.cn/2021/08/23/linux-expect-automated-interaction/">http://www.rainmote.cn/2021/08/23/linux-expect-automated-interaction/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://www.rainmote.cn/tags/%E8%87%AA%E5%8A%A8%E5%8C%96/">自动化</a></span><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://www.rainmote.cn/tags/%E6%95%88%E7%8E%87/">效率</a></span><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://www.rainmote.cn/tags/Devops/">Devops</a></span><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://www.rainmote.cn/tags/Linux/">Linux</a></span></div><div class="post-share"><div class="social-share" data-sites="wechat, weibo, qq, douban, linkedin, facebook, twitter, google">分享: </div></div><div class="post-reward reward"><div class="reward-button">请我喝杯咖啡~</div><div class="reward-qrcode"><span class="reward-qrcode-alipay"><img class="reward-qrcode-alipay__img"><div class="reward-qrcode-alipay__text">支付宝打赏</div></span><span class="reward-qrcode-wechat"><img class="reward-qrcode-wechat__img" src="/images/wechat.jpg"><div class="reward-qrcode-wechat__text">微信打赏</div></span></div></div><nav class="post-paginator paginator"><div class="paginator-next"><a class="paginator-next__link" href="/2020/04/28/Upsource-HTTP-API-python/"><span class="paginator-prev__text">用Python优雅的封装Upsource HTTP API</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">
+          背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">
+          简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#TCL%E8%AF%AD%E6%B3%95"><span class="toc-number">3.</span> <span class="toc-text">
+          TCL语法</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8F%98%E9%87%8F"><span class="toc-number">3.1.</span> <span class="toc-text">
+          变量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%95%B0%E7%BB%84"><span class="toc-number">3.2.</span> <span class="toc-text">
+          数组</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%8E%B7%E5%8F%96%E7%94%A8%E6%88%B7%E8%BE%93%E5%85%A5"><span class="toc-number">3.3.</span> <span class="toc-text">
+          获取用户输入</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#if%E6%9D%A1%E4%BB%B6%E5%88%86%E6%94%AF"><span class="toc-number">3.4.</span> <span class="toc-text">
+          if条件分支</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#for%E5%BE%AA%E7%8E%AF"><span class="toc-number">3.5.</span> <span class="toc-text">
+          for循环</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Expect%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D"><span class="toc-number">4.</span> <span class="toc-text">
+          Expect应用介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8E%A5%E5%8F%97%E7%AA%97%E5%8F%A3%E6%94%B9%E5%8F%98%E4%BF%A1%E5%8F%B7"><span class="toc-number">4.1.</span> <span class="toc-text">
+          接受窗口改变信号</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#ssh%E8%87%AA%E5%8A%A8%E7%99%BB%E5%BD%95"><span class="toc-number">4.2.</span> <span class="toc-text">
+          ssh自动登录</span></a></li></ol></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/images/avatar.jpg" alt="avatar"></div><p class="sidebar-ov-author__text">雨中尘埃</p></div><div class="sidebar-ov-social"><a class="sidebar-ov-social-item" href="https://github.com/rainmote" target="_blank" rel="noopener"><span class="sidebar-ov-social-item__icon"><i class="fab fa-github"></i></span><span class="sidebar-ov-social-item__text">GitHub</span></a><a class="sidebar-ov-social-item" href="/about" target="_blank" rel="noopener"><span class="sidebar-ov-social-item__icon"><i class="fab fa-weixin"></i></span><span class="sidebar-ov-social-item__text">Wechat</span></a><a class="sidebar-ov-social-item" href="mailto:rainmote@gmail.com" target="_blank" rel="noopener"><span class="sidebar-ov-social-item__icon"><i class="fas fa-envelope"></i></span><span class="sidebar-ov-social-item__text">Email</span></a><a class="sidebar-ov-social-item" href="https://twitter.com/rainmote9527" target="_blank" rel="noopener"><span class="sidebar-ov-social-item__icon"><i class="fab fa-twitter"></i></span><span class="sidebar-ov-social-item__text">twitter</span></a></div><div class="sidebar-ov-feed"><span class="sidebar-ov-feed-rss"><a class="sidebar-ov-feed-rss__link" href="/atom.xml" target="_blank" rel="noopener"><span class="sidebar-ov-feed-rss__icon"><i class="fas fa-rss"></i></span><span>RSS 订阅</span></a></span></div><div class="sidebar-ov-state"><a class="sidebar-ov-state-item sidebar-ov-state-item--posts" href="/archives/"><div class="sidebar-ov-state-item__count">5</div><div class="sidebar-ov-state-item__name">归档</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--categories" href="/categories/"><div class="sidebar-ov-state-item__count">3</div><div class="sidebar-ov-state-item__name">分类</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--tags" href="/tags/"><div class="sidebar-ov-state-item__count">10</div><div class="sidebar-ov-state-item__name">标签</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span><span class="sidebar-reading-info__perc">%</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2021</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>rainmote</span></div><div><span>由 <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a> 强力驱动</span><span> v5.4.0</span><span class="footer__devider">|</span><span>主题 - <a href="https://github.com/liuyib/hexo-theme-stun/" title="Stun" target="_blank" rel="noopener">Stun</a></span><span> v2.6.2</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><div class="search-mask"></div><div class="search-popup"><span class="search-close"></span><div class="search-input"><input placeholder="搜索文章（支持多关键词，请用空格分隔）"></div><div class="search-results"></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script><script>function initSearch() {
+  var isXML = true;
+  var search_path = 'search.json';
+
+  if (!search_path) {
+    search_path = 'search.xml';
+  } else if (/json$/i.test(search_path)) {
+    isXML = false;
+  }
+
+  var path = '/' + search_path;
+  $.ajax({
+    url: path,
+    dataType: isXML ? 'xml' : 'json',
+    async: true,
+    success: function (res) {
+      var datas = isXML ? $('entry', res).map(function () {
+        // 将 XML 转为 JSON
+        return {
+          title: $('title', this).text(),
+          content: $('content', this).text(),
+          url: $('url', this).text()
+        };
+      }).get() : res;
+      var $input = $('.search-input input');
+      var $result = $('.search-results');
+      // 搜索对象（标题、内容）的权重，影响显示顺序
+      var WEIGHT = { title: 100, content: 1 };
+      var searchPost = function () {
+        var searchText = $input.val().toLowerCase().trim();
+        // 根据空白字符分隔关键字
+        var keywords = searchText.split(/[\s]+/);
+        // 搜索结果
+        var matchPosts = [];
+
+        // 有多个关键字时，将原文字整个保存下来
+        if (keywords.length > 1) {
+          keywords.push(searchText);
+        }
+        // 防止未输入字符时搜索
+        if (searchText.length > 0) {
+          datas.forEach(function (data) {
+            var isMatch  = false;
+            // 没有标题的文章使用预设的 i18n 变量代替
+            var title = (data.title && data.title.trim()) || '[ 文章无标题 ]';
+            var titleLower = title && title.toLowerCase();
+            // 删除 HTML 标签 和 所有空白字符
+            var content = data.content && data.content.replace(/<[^>]+>/g, '');
+            var contentLower = content && content.toLowerCase();
+            // 删除重复的 /
+            var postURL = data.url && decodeURI(data.url).replace(/\/{2,}/g, '/');
+            // 标题中匹配到的关键词
+            var titleHitSlice = [];
+            // 内容中匹配到的关键词
+            var contentHitSlice = [];
+
+            keywords.forEach(function (keyword) {
+              /**
+              * 获取匹配的关键词的索引
+              * @param {String} keyword 要匹配的关键字
+              * @param {String} text 原文字
+              * @param {Boolean} caseSensitive 是否区分大小写
+              * @param {Number} weight 匹配对象的权重。权重大的优先显示
+              * @return {Array}
+              */
+              function getIndexByword (word, text, caseSensitive, weight) {
+                if (!word || !text) {
+                  return [];
+                };
+
+                var startIndex = 0; // 每次匹配的开始索引
+                var index = -1;     // 匹配到的索引值
+                var result = [];    // 匹配结果
+
+                if (!caseSensitive) {
+                  word = word.toLowerCase();
+                  text = text.toLowerCase();
+                }
+
+                while((index = text.indexOf(word, startIndex)) !== -1) {
+                  var hasMatch = false;
+                  // 索引位置相同的关键词，保留长度较长的
+                  titleHitSlice.forEach(function (hit) {
+                    if (hit.index === index && hit.word.length < word.length) {
+                      hit.word = word;
+                      hasMatch = true;
+                    }
+                  });
+                  startIndex = index + word.length;
+                  !hasMatch && result.push({ index: index, word: word, weight: weight });
+                }
+                return result;
+              }
+              titleHitSlice = titleHitSlice.concat(getIndexByword(keyword, titleLower, false, WEIGHT.title));
+              contentHitSlice = contentHitSlice.concat(getIndexByword(keyword, contentLower, false, WEIGHT.content));
+            });
+
+            var hitTitle = titleHitSlice.length;
+            var hitContent = contentHitSlice.length;
+
+            if (hitTitle > 0 || hitContent > 0) {
+              isMatch = true;
+            }
+            if (isMatch) {
+              ;[titleHitSlice, contentHitSlice].forEach(function (hit) {
+                // 按照匹配文字的索引的递增顺序排序
+                hit.sort(function (left, right) {
+                  return left.index - right.index;
+                });
+              });
+              /**
+              * 给文本中匹配到的关键词添加标记，从而进行高亮显示
+              * @param {String} text 原文本
+              * @param {Array} hitSlice 匹配项的索引信息
+              * @param {Number} start 开始索引
+              * @param {Number} end 结束索引
+              * @return {String}
+              */
+              function highlightKeyword (text, hitSlice, start, end) {
+                if (!text || !hitSlice || !hitSlice.length) {
+                  return;
+                }
+
+                var result = '';
+                var startIndex = start;
+                var endIndex = end;
+                hitSlice.forEach(function (hit) {
+                  if (hit.index < startIndex) {
+                    return;
+                  }
+
+                  var hitWordEnd = hit.index + hit.word.length;
+                  result += text.slice(startIndex, hit.index);
+                  result += '<b>' + text.slice(hit.index, hitWordEnd) + '</b>';
+                  startIndex = hitWordEnd;
+                });
+                result += text.slice(startIndex, endIndex);
+                return result;
+              }
+
+              var postData = {};
+              // 文章总的搜索权重
+              var postWeight = titleHitSlice.length * WEIGHT.title + contentHitSlice.length * WEIGHT.content;
+              // 标记匹配关键词后的标题
+              var postTitle = highlightKeyword(title, titleHitSlice, 0, title.length) || title;
+              // 标记匹配关键词后的内容
+              var postContent;
+              // 显示内容的长度
+              var SHOW_WORD_LENGTH = 200;
+              // 命中关键词前的字符显示长度
+              var SHOW_WORD_FRONT_LENGTH = 20;
+              var SHOW_WORD_END_LENGTH = SHOW_WORD_LENGTH - SHOW_WORD_FRONT_LENGTH;
+
+              // 截取匹配的第一个字符，前后共 200 个字符来显示
+              if (contentHitSlice.length > 0) {
+                var firstIndex = contentHitSlice[0].index;
+                var start = firstIndex > SHOW_WORD_FRONT_LENGTH ? firstIndex - SHOW_WORD_FRONT_LENGTH : 0;
+                var end = firstIndex + SHOW_WORD_END_LENGTH;
+                postContent = highlightKeyword(content, contentHitSlice, start, end);
+              } else { // 未匹配到内容，直接截取前 200 个字符来显示
+                postContent = content.slice(0, SHOW_WORD_LENGTH);
+              }
+              postData.title = postTitle;
+              postData.content = postContent;
+              postData.url = postURL;
+              postData.weight = postWeight;
+              matchPosts.push(postData);
+            }
+          });
+        }
+
+        var resultInnerHtml = '';
+        if (matchPosts.length) {
+          // 按权重递增的顺序排序，使权重大的优先显示
+          matchPosts.sort(function (left, right) {
+            return right.weight - left.weight;
+          });
+          resultInnerHtml += '<ul>';
+          matchPosts.forEach(function (post) {
+            resultInnerHtml += '<li><a class="search-results-title" href="' + post.url + '">';
+            resultInnerHtml += post.title;
+            resultInnerHtml += '</a><div class="search-results-content">';
+            resultInnerHtml += post.content;
+            resultInnerHtml += '</div></li>';
+          });
+          resultInnerHtml += '</ul>';
+        } else {
+          resultInnerHtml += '<div class="search-results-none"><i class="far fa-meh"></i></div>';
+        }
+        $result.html(resultInnerHtml);
+      };
+      $input.on('input', searchPost);
+      $input.on('keyup', function (e) {
+        if (e.keyCode === Stun.utils.codeToKeyCode('Enter')) {
+          searchPost();
+        }
+      });
+    }
+  });
+}
+
+function closeSearch () {
+  $('body').css({ overflow: 'auto' });
+  $('.search-popup').css({ display: 'none' });
+  $('.search-mask').css({ display: 'none' });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+  Stun.utils.pjaxReloadLocalSearch = function () {
+    $('.header-nav-search').on('click', function (e) {
+      e.stopPropagation();
+      $('body').css('overflow', 'hidden');
+      $('.search-popup')
+        .velocity('stop')
+        .velocity('transition.expandIn', {
+          duration: 300,
+          complete: function () {
+            $('.search-popup input').focus();
+          }
+        });
+      $('.search-mask')
+        .velocity('stop')
+        .velocity('transition.fadeIn', {
+          duration: 300
+        });
+
+      initSearch();
+    });
+    $('.search-mask, .search-close').on('click', function () {
+      closeSearch();
+    });
+    $(document).on('keydown', function (e) {
+      // Escape <=> 27
+      if (e.keyCode === Stun.utils.codeToKeyCode('Escape')) {
+        closeSearch();
+      }
+    });
+  };
+
+  Stun.utils.pjaxReloadLocalSearch();
+}, false);
+
+function safeOpenUrl(url) {
+  var newTab = window.open();
+  newTab.opener = null;
+  newTab.location = url;
+}
+
+function extSearch(engine) {
+  var engines = {
+    google: 'https://www.google.com/search?q=',
+    bing: 'https://cn.bing.com/search?q=',
+    baidu: 'https://www.baidu.com/s?ie=UTF-8&wd=',
+  };
+  var host = window.location.host;
+  var query = $('.search-input input').val().toLowerCase().trim();
+  var uri = engines[engine] + query + ' site:' + host;
+
+  if (query) {
+    safeOpenUrl(uri);
+  } else {
+    Stun.utils.popAlert('warning', '请输入字符');
+  }
+}
+
+var assistSearchList = window.CONFIG.assistSearch;
+
+if (Array.isArray(assistSearchList)) {
+  assistSearchList.forEach(function (name) {
+    document.querySelector('.search-btns-item--' + name).addEventListener('click', function () {
+      extSearch(name);
+    }, false);
+  });
+}</script><script src="/js/utils.js?v=2.6.2"></script><script src="/js/stun-boot.js?v=2.6.2"></script><script src="/js/scroll.js?v=2.6.2"></script><script src="/js/header.js?v=2.6.2"></script><script src="/js/sidebar.js?v=2.6.2"></script><script type="application/json" src="/search.json"></script></body></html>

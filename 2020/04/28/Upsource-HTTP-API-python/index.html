@@ -1,0 +1,397 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="format-detection" content="telephone=no"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><link rel="icon" href="/images/icons/favicon-16x16.ico?v=2.6.2" type="image/png" sizes="16x16"><link rel="icon" href="/images/icons/favicon-32x32.ico?v=2.6.2" type="image/png" sizes="32x32"><link rel="apple-touch-icon" href="/images/icons/apple-touch-icon.png?v=2.6.2" sizes="180x180"><link rel="mask-icon" href="/images/icons/apple-touch-icon.png?v=2.6.2" color="#54bcff"><meta name="msapplication-TileImage" content="/images/icons/favicon.png"><meta name="msapplication-TileColor" content="#000000"><meta name="google-site-verification" content="1TvdRqt6ID-jrB0QcBvzPs7TL8gomTrCoTDsI6CxqkY"><meta name="description" content="Upsource是一个非常出色的CodeReview工具, 本文主要介绍如何使用Python优雅的封装其API">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用Python优雅的封装Upsource HTTP API">
+<meta property="og:url" content="http://www.rainmote.cn/2020/04/28/Upsource-HTTP-API-python/index.html">
+<meta property="og:site_name" content="雨中尘埃">
+<meta property="og:description" content="Upsource是一个非常出色的CodeReview工具, 本文主要介绍如何使用Python优雅的封装其API">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-28T11:36:31.000Z">
+<meta property="article:modified_time" content="2021-08-23T02:39:30.837Z">
+<meta property="article:author" content="rainmote">
+<meta property="article:tag" content="编程">
+<meta property="article:tag" content="python">
+<meta property="article:tag" content="upsource">
+<meta name="twitter:card" content="summary"><title>用Python优雅的封装Upsource HTTP API | 雨中尘埃</title><link ref="canonical" href="http://www.rainmote.cn/2020/04/28/Upsource-HTTP-API-python/"><link rel="alternate" href="/atom.xml" type="application/atom+xml"><link rel="dns-prefetch" href="https://cdn.jsdelivr.net"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.1/css/all.min.css" type="text/css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/css/share.min.css" type="text/css"><link rel="stylesheet" href="/css/index.css?v=2.6.2"><link rel="dns-prefetch" href="https://hm.baidu.com"><script>var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement('script');
+  hm.src = 'https://hm.baidu.com/hm.js?1d29d8a4c1690c192a6fc1da4d1be771';
+  hm.async = true;
+
+  if (false) {
+    hm.setAttribute('data-pjax', '');
+  }
+  var s = document.getElementsByTagName('script')[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();</script><script>var Stun = window.Stun || {};
+var CONFIG = {
+  root: '/',
+  algolia: undefined,
+  assistSearch: undefined,
+  fontIcon: {"prompt":{"success":"fas fa-check-circle","info":"fas fa-arrow-circle-right","warning":"fas fa-exclamation-circle","error":"fas fa-times-circle"},"copyBtn":"fas fa-copy"},
+  sidebar: {"offsetTop":"20px","tocMaxDepth":6},
+  header: {"enable":true,"showOnPost":true,"scrollDownIcon":false},
+  postWidget: {"endText":true},
+  nightMode: {"enable":true},
+  back2top: {"enable":true},
+  codeblock: {"style":"default","highlight":"light","wordWrap":false},
+  reward: true,
+  fancybox: false,
+  zoomImage: {"gapAside":"20px"},
+  galleryWaterfall: undefined,
+  lazyload: false,
+  pjax: undefined,
+  externalLink: {"icon":{"enable":true,"name":"fas fa-external-link-alt"}},
+  shortcuts: undefined,
+  prompt: {"copyButton":"复制","copySuccess":"复制成功","copyError":"复制失败"},
+  sourcePath: {"js":"js","css":"css","images":"images"},
+};
+
+window.CONFIG = CONFIG;</script><meta name="generator" content="Hexo 5.4.0"></head><body><div class="container" id="container"><header class="header" id="header"><div class="header-inner"><nav class="header-nav header-nav--fixed"><div class="header-nav-inner"><div class="header-nav-menubtn"><i class="fas fa-bars"></i></div><div class="header-nav-menu"><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/"><span class="header-nav-menu-item__icon"><i class="fas fa-home"></i></span><span class="header-nav-menu-item__text">首页</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/archives/"><span class="header-nav-menu-item__icon"><i class="fas fa-folder-open"></i></span><span class="header-nav-menu-item__text">归档</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/categories/"><span class="header-nav-menu-item__icon"><i class="fas fa-th"></i></span><span class="header-nav-menu-item__text">分类</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/tags/"><span class="header-nav-menu-item__icon"><i class="fas fa-tags"></i></span><span class="header-nav-menu-item__text">标签</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" href="/about/"><span class="header-nav-menu-item__icon"><i class="fas fa-user"></i></span><span class="header-nav-menu-item__text">关于</span></a></div><div class="header-nav-menu-item"><a class="header-nav-menu-item__link" target="_blank" rel="noopener" href="https://www.cnblogs.com/rainmote/"><span class="header-nav-menu-item__icon"><i class="fas fa-link"></i></span><span class="header-nav-menu-item__text">博客园</span></a></div></div><div class="header-nav-search"><span class="header-nav-search__icon"><i class="fas fa-search"></i></span><span class="header-nav-search__text">搜索</span></div><div class="header-nav-mode"><div class="mode"><div class="mode-track"><span class="mode-track-moon"></span><span class="mode-track-sun"></span></div><div class="mode-thumb"></div></div></div></div></nav><div class="header-banner"><div class="header-banner-info"><div class="header-banner-info__title">雨中尘埃</div><div class="header-banner-info__subtitle">吾生也有涯，而知也无涯</div></div></div></div></header><main class="main" id="main"><div class="main-inner"><div class="content-wrap" id="content-wrap"><div class="content" id="content"><!-- Just used to judge whether it is an article page--><div id="is-post"></div><div class="post"><header class="post-header"><h1 class="post-title">用Python优雅的封装Upsource HTTP API</h1><div class="post-meta"><span class="post-meta-item post-meta-item--createtime"><span class="post-meta-item__icon"><i class="far fa-calendar-plus"></i></span><span class="post-meta-item__info">发表于</span><span class="post-meta-item__value">2020-04-28</span></span><span class="post-meta-item post-meta-item--readtime"><span class="post-meta-item__icon"><i class="far fa-clock"></i></span><span class="post-meta-item__info">阅读时长</span><span class="post-meta-item__value">21分</span></span></div></header><div class="post-body">
+        <h1 id="背景"   >
+          <a href="#背景" class="heading-link"><i class="fas fa-link"></i></a><a href="#背景" class="headerlink" title="背景"></a>背景</h1>
+      <p>Upsource是一个非常出色的CodeReview工具，在和其他系统联动时需要通过API进行访问，于是使用python对其API进行封装，过程中一步一步思考如何使用python装饰器简化封装，达到十分简洁的封装。<br>本文主要介绍利用动态生成函数和装饰器两种方法简化API封装的实现。</p>
+
+        <h1 id="Upsource-HTTP-API说明"   >
+          <a href="#Upsource-HTTP-API说明" class="heading-link"><i class="fas fa-link"></i></a><a href="#Upsource-HTTP-API说明" class="headerlink" title="Upsource HTTP API说明"></a>Upsource HTTP API说明</h1>
+      <figure class="highlight stata"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Upsource API is <span class="keyword">an</span> RPC-style HTTP API. You can make calls using HTTP GET and <span class="keyword">POST</span>. All data is sent and received <span class="keyword">as</span> JSON. <span class="keyword">While</span> the RPC methods don&#x27;t enforce the <span class="keyword">use</span> of a specific HTTP method, we recommend that you conform to HTTP semantics <span class="keyword">by</span> using GET <span class="keyword">for</span> retrieving data (<span class="keyword">e</span>.<span class="keyword">g</span>. getRevisionsList) and <span class="keyword">POST</span> <span class="keyword">for</span> modifying data (<span class="keyword">e</span>.<span class="keyword">g</span>. createReview).</span><br><span class="line"></span><br><span class="line">All timestamps are Unix timestamps, the number of seconds that have elapsed since January 1, 1970 (midnight UTC/GMT).</span><br><span class="line"></span><br><span class="line">To invoke a method of the Upsource API using HTTP GET, make the following request:</span><br><span class="line"></span><br><span class="line">http:<span class="comment">//your-upsource-host/~rpc/methodName?params=&#123;JSON-encoded-params&#125;</span></span><br><span class="line">To make a <span class="keyword">POST</span> request, <span class="keyword">use</span> the same URL but pass the request payload <span class="keyword">in</span> the <span class="keyword">POST</span> body instead. A Content-<span class="keyword">Type</span> of application/json should be <span class="keyword">set</span>.</span><br></pre></td></tr></table></div></figure>
+<p>根据文档描述，每个接口的调用包含methodName和JSON格式的参数，于是我们开始用python进行封装。</p>
+
+        <h1 id="简单实现"   >
+          <a href="#简单实现" class="heading-link"><i class="fas fa-link"></i></a><a href="#简单实现" class="headerlink" title="简单实现"></a>简单实现</h1>
+      <p>最简单的就是实现就是每个API加个函数</p>
+<figure class="highlight python"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Upsource</span>:</span></span><br><span class="line">    ENDPOINT = <span class="string">&quot;https://upsource.xxxx.com&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, user, passwd, retry_times = <span class="number">3</span></span>):</span></span><br><span class="line">        self.__auth = HTTPBasicAuth(user, passwd)</span><br><span class="line">        self.retry_times = retry_times</span><br><span class="line"></span><br><span class="line">    <span class="comment"># HTTP请求</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_request</span>(<span class="params">self, rpc_name, data</span>):</span></span><br><span class="line">        suffix = <span class="string">&#x27;/~rpc/&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(rpc_name)</span><br><span class="line">        url = self.ENDPOINT + re.sub(<span class="string">&#x27;/+&#x27;</span>, <span class="string">&#x27;/&#x27;</span>, suffix)</span><br><span class="line"></span><br><span class="line">        headers = &#123;<span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json; charset=utf-8&#x27;</span>&#125;</span><br><span class="line">        proxies = &#123; <span class="string">&quot;http&quot;</span>: <span class="string">&quot;http://127.0.0.1:8080&quot;</span>, <span class="string">&quot;https&quot;</span>: <span class="string">&quot;http://127.0.0.1:8080&quot;</span>&#125;</span><br><span class="line">        retry = self.retry_times</span><br><span class="line"></span><br><span class="line">        info(<span class="string">&#x27;&#123;&#125;, request: &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(rpc_name, data))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> retry &gt; <span class="number">0</span>:</span><br><span class="line">            retry -= <span class="number">1</span></span><br><span class="line">            resp = <span class="literal">None</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                resp = requests.post(url, data=json.dumps(data), auth=self.__auth, headers=headers, verify=<span class="literal">False</span>)</span><br><span class="line">                <span class="keyword">if</span> resp <span class="keyword">and</span> resp.status_code == <span class="number">200</span>:</span><br><span class="line">                    <span class="keyword">return</span> json.loads(resp.text)[<span class="string">&#x27;result&#x27;</span>]</span><br><span class="line">                <span class="keyword">raise</span> Exception(<span class="string">&#x27;request failed&#x27;</span>)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                error(<span class="string">&#x27;request upsource failed!, rpc_name: &#123;&#125;, request: &#123;&#125;, resp: &#123;&#125;, error:&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(rpc_name, data, resp.text, <span class="built_in">str</span>(e)))</span><br><span class="line">            time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># getBranchInfo</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_branch_info</span>(<span class="params">self, project_id, branch</span>):</span></span><br><span class="line">        data = &#123;<span class="string">&#x27;projectId&#x27;</span>: project_id,</span><br><span class="line">                <span class="string">&#x27;branch&#x27;</span>: branch&#125;</span><br><span class="line">        <span class="keyword">return</span> self._request(<span class="string">&#x27;getBranchInfo&#x27;</span>, data)</span><br></pre></td></tr></table></div></figure>
+<p>上述实现每个API都需要实现一个函数做转换，有没有优化的空间？<br>下面我们介绍两种方法进行优化：</p>
+<ul>
+<li>动态生成函数</li>
+<li>装饰器</li>
+</ul>
+
+        <h1 id="动态生成函数"   >
+          <a href="#动态生成函数" class="heading-link"><i class="fas fa-link"></i></a><a href="#动态生成函数" class="headerlink" title="动态生成函数"></a>动态生成函数</h1>
+      
+        <h2 id="核心思路"   >
+          <a href="#核心思路" class="heading-link"><i class="fas fa-link"></i></a><a href="#核心思路" class="headerlink" title="核心思路"></a>核心思路</h2>
+      <p>python使用<code>locals()</code>可以获取当前上下文<br><code>exec()</code>可以执行在字符串中的python代码，所以可以动态生成函数，然后利用<code>setattr()</code>将生成的函数</p>
+
+        <h2 id="实现探索"   >
+          <a href="#实现探索" class="heading-link"><i class="fas fa-link"></i></a><a href="#实现探索" class="headerlink" title="实现探索"></a>实现探索</h2>
+      <p>我们可以利用下划线转驼峰，将参数名的转换做优化，配合locals()获取参数列表<br>下划线转驼峰函数</p>
+<figure class="highlight python"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">underline2hump</span>(<span class="params">underline_str</span>):</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.join([x.capitalize() <span class="keyword">for</span> x <span class="keyword">in</span> underline_str.split(<span class="string">&#x27;_&#x27;</span>) <span class="keyword">if</span> x])</span><br></pre></td></tr></table></div></figure>
+
+<figure class="highlight python"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_branch_info</span>(<span class="params">project_id, branch</span>):</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">locals</span>())</span><br><span class="line">    </span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>get_branch_info(<span class="string">&quot;123456&quot;</span>, <span class="string">&quot;master&quot;</span>)</span><br><span class="line">&#123;<span class="string">&#x27;project_id&#x27;</span>: <span class="string">&#x27;123456&#x27;</span>, <span class="string">&#x27;branch&#x27;</span>: <span class="string">&#x27;master&#x27;</span>&#125;</span><br></pre></td></tr></table></div></figure>
+<p>于是，每个API函数可以优化成这样</p>
+<figure class="highlight python"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_branch_info</span>(<span class="params">self, project_id, branch</span>):</span></span><br><span class="line">    m = <span class="built_in">locals</span>()</span><br><span class="line">    m.pop(<span class="string">&#x27;self&#x27;</span>)</span><br><span class="line">    data = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> k,v <span class="keyword">in</span> iteritems(m):</span><br><span class="line">        data[underline2hump(k)] = v</span><br><span class="line">    <span class="keyword">return</span> self._request(underline2hump(__name__), data)</span><br></pre></td></tr></table></div></figure>
+<p>函数体变成公共的了， 所以我们可以再写个公共函数，这样每个API都可以调用这个公共函数</p>
+<figure class="highlight python"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">request</span>(<span class="params">self, data</span>):</span></span><br><span class="line">    rpc_name = sys._getframe(<span class="number">1</span>).f_code.co_name</span><br><span class="line">    resp = self._request(rpc_name, data)</span><br><span class="line">    info(pprint.pformat(resp))</span><br><span class="line">    <span class="keyword">return</span> resp</span><br></pre></td></tr></table></div></figure>
+<p>每个API函数调用<code>request</code>， 获取上一层调用名，请求参数透传；<br><strong>注意: 这里不能用locals()，应为locals只是针对调用栈的本层命名空间，暂时没找到方法获取上一层调用函数的参数列表</strong><br>所以每个API函数应该都有如下函数体</p>
+<figure class="highlight python"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">api_name</span>(<span class="params">self, params1, params2, ...</span>):</span></span><br><span class="line">    m = <span class="built_in">locals</span>();</span><br><span class="line">    m.pop(<span class="string">&#x27;self&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> self.request(m);</span><br></pre></td></tr></table></div></figure>
+<p>我们可以利用python的<code>exec()</code>将字符串代码执行，这样我们就可以动态生成形如上述格式的函数，并且函数名和参数可变</p>
+<figure class="highlight python"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">REQUEST_MAP = &#123;</span><br><span class="line">    <span class="string">&#x27;getProjectInfo&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;getCodeReviewPatterns&#x27;</span>: [],</span><br><span class="line">    <span class="string">&#x27;getRevisionsList&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;limit&#x27;</span>, <span class="string">&#x27;skip = 0&#x27;</span>, <span class="string">&#x27;requestGraph = False&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;getRevisionsListFiltered&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;query&#x27;</span>, <span class="string">&#x27;limit&#x27;</span>, <span class="string">&#x27;skip = 0&#x27;</span>, <span class="string">&#x27;requestGraph = False&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;getRevisionInfo&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;revisionId&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;getBranchInfo&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;branch&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;getBranchGraph&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;branch&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;getBranches&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;query&#x27;</span>, <span class="string">&#x27;limit&#x27;</span>, <span class="string">&#x27;sortBy = &quot;updated&quot;&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;findCommits&#x27;</span>: [<span class="string">&#x27;commits&#x27;</span>, <span class="string">&#x27;requestChanges = False&#x27;</span>, <span class="string">&#x27;limit = 10&#x27;</span>],</span><br><span class="line">    <span class="string">&#x27;getReviews&#x27;</span>: [<span class="string">&#x27;limit&#x27;</span>, <span class="string">&#x27;query = &quot;*&quot;&#x27;</span>, <span class="string">&#x27;sortBy = &quot;updated&quot;&#x27;</span>, <span class="string">&#x27;projectId = &quot;herohub-platform&quot;&#x27;</span>, <span class="string">&#x27;skip = 0&#x27;</span>],</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment"># dynamic gen class function from REQUEST_MAP</span></span><br><span class="line"><span class="keyword">for</span> k, v <span class="keyword">in</span> self.REQUEST_MAP.items():</span><br><span class="line">    fn_str = <span class="string">&#x27;&#x27;&#x27;def &#123;&#125;(self, &#123;&#125;): m = locals(); m.pop(&#x27;self&#x27;); return self.request(m);&#x27;&#x27;&#x27;</span>.<span class="built_in">format</span>(k, <span class="string">&#x27;, &#x27;</span>.join(v))</span><br><span class="line">    info(<span class="string">&#x27;class: &#123;&#125;, gen function: &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(self.__class__.__name__, fn_str))</span><br><span class="line">    <span class="built_in">exec</span>(fn_str)</span><br><span class="line">    <span class="built_in">setattr</span>(Upsource, k, <span class="built_in">locals</span>().get(k))</span><br></pre></td></tr></table></div></figure>
+<p>由此，我们只需要修改REQUEST_MAP就能实现API封装。<br>这个实现有个小缺点：由于函数是运行时生成的，所以编辑器没法索引定义，可能导致误报。</p>
+
+        <h1 id="使用装饰器进行优化"   >
+          <a href="#使用装饰器进行优化" class="heading-link"><i class="fas fa-link"></i></a><a href="#使用装饰器进行优化" class="headerlink" title="使用装饰器进行优化"></a>使用装饰器进行优化</h1>
+      
+        <h2 id="核心思路-1"   >
+          <a href="#核心思路-1" class="heading-link"><i class="fas fa-link"></i></a><a href="#核心思路-1" class="headerlink" title="核心思路"></a>核心思路</h2>
+      <p>利用装饰器+inspect库获取函数参数名及参数值，进行参数预处理，然后进行调用</p>
+
+        <h2 id="实现探索-1"   >
+          <a href="#实现探索-1" class="heading-link"><i class="fas fa-link"></i></a><a href="#实现探索-1" class="headerlink" title="实现探索"></a>实现探索</h2>
+      <figure class="highlight python"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> inspect</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">request</span>(<span class="params">func</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">wrapper</span>(<span class="params">*args, **kw</span>):</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;locals: &#123;&#125;&quot;</span>.<span class="built_in">format</span>(<span class="built_in">locals</span>()))</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;args: &#123;&#125;&quot;</span>.<span class="built_in">format</span>(args))</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;kw: &#123;&#125;&quot;</span>.<span class="built_in">format</span>(kw))</span><br><span class="line">        spec = inspect.getfullargspec(func)</span><br><span class="line">        <span class="built_in">print</span>(spec)</span><br><span class="line">        </span><br><span class="line">        data = &#123;&#125;</span><br><span class="line">        <span class="keyword">for</span> idx, k <span class="keyword">in</span> <span class="built_in">enumerate</span>(spec.args):</span><br><span class="line">            <span class="keyword">if</span> idx &gt;= <span class="built_in">len</span>(args):</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line">            data[k] = args[idx]</span><br><span class="line">            </span><br><span class="line">        <span class="keyword">for</span> idx, k <span class="keyword">in</span> <span class="built_in">enumerate</span>(spec.args[<span class="built_in">len</span>(args):]):</span><br><span class="line">            data[k] = spec.defaults[idx]</span><br><span class="line">            </span><br><span class="line">        method = <span class="built_in">getattr</span>(data[<span class="string">&#x27;self&#x27;</span>], <span class="string">&#x27;request_internal&#x27;</span>)</span><br><span class="line">        self = data.pop(<span class="string">&#x27;self&#x27;</span>)</span><br><span class="line">        <span class="keyword">return</span> method(func.__name__, data)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> wrapper</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HttpRequestWrap</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">request_internal</span>(<span class="params">self, name, data</span>):</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;call request, name: &#123;&#125;, data: &#123;&#125;&quot;</span>.<span class="built_in">format</span>(name, data))</span><br><span class="line">        </span><br><span class="line"><span class="meta">    @request</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_branch_info</span>(<span class="params">self, project_id, branch_name</span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">    </span><br><span class="line"><span class="meta">    @request</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_branch_info2</span>(<span class="params">self, project_id, branch_name=<span class="string">&#x27;&#x27;</span></span>):</span></span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line">h = HttpRequestWrap()</span><br><span class="line">h.get_branch_info(<span class="string">&quot;123456&quot;</span>, <span class="string">&quot;master&quot;</span>)</span><br><span class="line"><span class="built_in">locals</span>: &#123;<span class="string">&#x27;args&#x27;</span>: (&lt;__main__.HttpRequestWrap <span class="built_in">object</span> at <span class="number">0x10fd5b450</span>&gt;, <span class="string">&#x27;123456&#x27;</span>, <span class="string">&#x27;master&#x27;</span>), <span class="string">&#x27;kw&#x27;</span>: &#123;&#125;, <span class="string">&#x27;func&#x27;</span>: &lt;function HttpRequestWrap.get_branch_info at <span class="number">0x10fd5a4d0</span>&gt;&#125;</span><br><span class="line">args: (&lt;__main__.HttpRequestWrap <span class="built_in">object</span> at <span class="number">0x10fd5b450</span>&gt;, <span class="string">&#x27;123456&#x27;</span>, <span class="string">&#x27;master&#x27;</span>)</span><br><span class="line">kw: &#123;&#125;</span><br><span class="line">FullArgSpec(args=[<span class="string">&#x27;self&#x27;</span>, <span class="string">&#x27;project_id&#x27;</span>, <span class="string">&#x27;branch_name&#x27;</span>], varargs=<span class="literal">None</span>, varkw=<span class="literal">None</span>, defaults=<span class="literal">None</span>, kwonlyargs=[], kwonlydefaults=<span class="literal">None</span>, annotations=&#123;&#125;)</span><br><span class="line">call request, name: get_branch_info, data: &#123;<span class="string">&#x27;project_id&#x27;</span>: <span class="string">&#x27;123456&#x27;</span>, <span class="string">&#x27;branch_name&#x27;</span>: <span class="string">&#x27;master&#x27;</span>&#125;</span><br><span class="line"></span><br><span class="line">h.get_branch_info2(<span class="string">&quot;123456&quot;</span>)</span><br><span class="line"><span class="built_in">locals</span>: &#123;<span class="string">&#x27;args&#x27;</span>: (&lt;__main__.HttpRequestWrap <span class="built_in">object</span> at <span class="number">0x10fd5b450</span>&gt;, <span class="string">&#x27;123456&#x27;</span>), <span class="string">&#x27;kw&#x27;</span>: &#123;&#125;, <span class="string">&#x27;func&#x27;</span>: &lt;function HttpRequestWrap.get_branch_info2 at <span class="number">0x10fd5a680</span>&gt;&#125;</span><br><span class="line">args: (&lt;__main__.HttpRequestWrap <span class="built_in">object</span> at <span class="number">0x10fd5b450</span>&gt;, <span class="string">&#x27;123456&#x27;</span>)</span><br><span class="line">kw: &#123;&#125;</span><br><span class="line">FullArgSpec(args=[<span class="string">&#x27;self&#x27;</span>, <span class="string">&#x27;project_id&#x27;</span>, <span class="string">&#x27;branch_name&#x27;</span>], varargs=<span class="literal">None</span>, varkw=<span class="literal">None</span>, defaults=(<span class="string">&#x27;&#x27;</span>,), kwonlyargs=[], kwonlydefaults=<span class="literal">None</span>, annotations=&#123;&#125;)</span><br><span class="line">call request, name: get_branch_info2, data: &#123;<span class="string">&#x27;project_id&#x27;</span>: <span class="string">&#x27;123456&#x27;</span>, <span class="string">&#x27;branch_name&#x27;</span>: <span class="string">&#x27;&#x27;</span>&#125;</span><br></pre></td></tr></table></div></figure>
+
+
+        <h1 id="完整代码"   >
+          <a href="#完整代码" class="heading-link"><i class="fas fa-link"></i></a><a href="#完整代码" class="headerlink" title="完整代码"></a>完整代码</h1>
+      
+        <h2 id="动态生成"   >
+          <a href="#动态生成" class="heading-link"><i class="fas fa-link"></i></a><a href="#动态生成" class="headerlink" title="动态生成"></a>动态生成</h2>
+      <figure class="highlight python"><div class="table-container"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/local/bin/python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"><span class="keyword">import</span> pprint</span><br><span class="line"><span class="keyword">from</span> requests.auth <span class="keyword">import</span> HTTPBasicAuth</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> urllib3</span><br><span class="line">urllib3.disable_warnings()</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> log <span class="keyword">import</span> debug, info, warning, error, fatal</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Upsource</span>:</span></span><br><span class="line">    ENDPOINT = <span class="string">&quot;https://upsource.xxxx.com&quot;</span></span><br><span class="line"></span><br><span class="line">    REQUEST_MAP = &#123;</span><br><span class="line">        <span class="string">&#x27;getProjectInfo&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;getCodeReviewPatterns&#x27;</span>: [],</span><br><span class="line">        <span class="string">&#x27;getRevisionsList&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;limit&#x27;</span>, <span class="string">&#x27;skip = 0&#x27;</span>, <span class="string">&#x27;requestGraph = False&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;getRevisionsListFiltered&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;query&#x27;</span>, <span class="string">&#x27;limit&#x27;</span>, <span class="string">&#x27;skip = 0&#x27;</span>, <span class="string">&#x27;requestGraph = False&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;getRevisionInfo&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;revisionId&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;getBranchInfo&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;branch&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;getBranchGraph&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;branch&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;getBranches&#x27;</span>: [<span class="string">&#x27;projectId&#x27;</span>, <span class="string">&#x27;query&#x27;</span>, <span class="string">&#x27;limit&#x27;</span>, <span class="string">&#x27;sortBy = &quot;updated&quot;&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;findCommits&#x27;</span>: [<span class="string">&#x27;commits&#x27;</span>, <span class="string">&#x27;requestChanges = False&#x27;</span>, <span class="string">&#x27;limit = 10&#x27;</span>],</span><br><span class="line">        <span class="string">&#x27;getReviews&#x27;</span>: [<span class="string">&#x27;limit&#x27;</span>, <span class="string">&#x27;query = &quot;*&quot;&#x27;</span>, <span class="string">&#x27;sortBy = &quot;updated&quot;&#x27;</span>, <span class="string">&#x27;projectId = &quot;herohub-platform&quot;&#x27;</span>, <span class="string">&#x27;skip = 0&#x27;</span>],</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, user, passwd, retry_times = <span class="number">3</span></span>):</span></span><br><span class="line">        self.__auth = HTTPBasicAuth(user, passwd)</span><br><span class="line">        self.retry_times = retry_times</span><br><span class="line"></span><br><span class="line">        <span class="comment"># dynamic gen class function from REQUEST_MAP</span></span><br><span class="line">        <span class="keyword">for</span> k, v <span class="keyword">in</span> self.REQUEST_MAP.items():</span><br><span class="line">            fn_str = <span class="string">&#x27;&#x27;&#x27;def &#123;&#125;(self, &#123;&#125;): m = locals(); m.pop(&#x27;self&#x27;); return self.request(m);&#x27;&#x27;&#x27;</span>.<span class="built_in">format</span>(k, <span class="string">&#x27;, &#x27;</span>.join(v))</span><br><span class="line">            info(<span class="string">&#x27;class: &#123;&#125;, gen function: &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(self.__class__.__name__, fn_str))</span><br><span class="line">            <span class="built_in">exec</span>(fn_str)</span><br><span class="line">            <span class="built_in">setattr</span>(Upsource, k, <span class="built_in">locals</span>().get(k))</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">_request</span>(<span class="params">self, rpc_name, data</span>):</span></span><br><span class="line">        suffix = <span class="string">&#x27;/~rpc/&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(rpc_name)</span><br><span class="line">        url = self.ENDPOINT + re.sub(<span class="string">&#x27;/+&#x27;</span>, <span class="string">&#x27;/&#x27;</span>, suffix)</span><br><span class="line"></span><br><span class="line">        headers = &#123;<span class="string">&#x27;Content-Type&#x27;</span>: <span class="string">&#x27;application/json; charset=utf-8&#x27;</span>&#125;</span><br><span class="line">        proxies = &#123; <span class="string">&quot;http&quot;</span>: <span class="string">&quot;http://127.0.0.1:8080&quot;</span>, <span class="string">&quot;https&quot;</span>: <span class="string">&quot;http://127.0.0.1:8080&quot;</span>&#125;</span><br><span class="line">        retry = self.retry_times</span><br><span class="line"></span><br><span class="line">        info(<span class="string">&#x27;&#123;&#125;, request: &#123;&#125;&#x27;</span>.<span class="built_in">format</span>(rpc_name, data))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> retry &gt; <span class="number">0</span>:</span><br><span class="line">            retry -= <span class="number">1</span></span><br><span class="line">            resp = <span class="literal">None</span></span><br><span class="line">            <span class="keyword">try</span>:</span><br><span class="line">                resp = requests.post(url, data=json.dumps(data), auth=self.__auth, headers=headers, verify=<span class="literal">False</span>)</span><br><span class="line">                <span class="keyword">if</span> resp <span class="keyword">and</span> resp.status_code == <span class="number">200</span>:</span><br><span class="line">                    <span class="keyword">return</span> json.loads(resp.text)[<span class="string">&#x27;result&#x27;</span>]</span><br><span class="line">                <span class="keyword">raise</span> Exception(<span class="string">&#x27;request failed&#x27;</span>)</span><br><span class="line">            <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">                error(<span class="string">&#x27;request upsource failed!, rpc_name: &#123;&#125;, request: &#123;&#125;, resp: &#123;&#125;, error:&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(rpc_name, data, resp.text, <span class="built_in">str</span>(e)))</span><br><span class="line">            time.sleep(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">request</span>(<span class="params">self, data</span>):</span></span><br><span class="line">        rpc_name = sys._getframe(<span class="number">1</span>).f_code.co_name</span><br><span class="line">        resp = self._request(rpc_name, data)</span><br><span class="line">        info(pprint.pformat(resp))</span><br><span class="line">        <span class="keyword">return</span> resp</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">getAllProjects</span>(<span class="params">self, projectIdList</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.request(&#123;<span class="string">&#x27;projectId&#x27;</span>: projectIdList&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    up = Upsource(<span class="string">&#x27;admin&#x27;</span>, <span class="string">&#x27;123456&#x27;</span>)</span><br><span class="line">    up.getProjectInfo(<span class="string">&quot;herohub-platform&quot;</span>)</span><br><span class="line">    up.getReviews(<span class="number">1000</span>, <span class="string">&#x27;branch:feature/20200316 and state: open&#x27;</span>)</span><br></pre></td></tr></table></div></figure>
+
+
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kity@2.0.4/dist/kity.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/kityminder-core@1.4.50/dist/kityminder.core.min.js"></script><script defer="true" type="text/javascript" src="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.js"></script><link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/hexo-simple-mindmap@0.2.0/dist/mindmap.min.css"></div><footer class="post-footer"><div class="post-ending ending"><div class="ending__text">------ 本文结束，感谢您的阅读 ------</div></div><div class="post-copyright copyright"><div class="copyright-author"><span class="copyright-author__name">本文作者: </span><span class="copyright-author__value"><a href="http://www.rainmote.cn">rainmote</a></span></div><div class="copyright-link"><span class="copyright-link__name">本文链接: </span><span class="copyright-link__value"><a href="http://www.rainmote.cn/2020/04/28/Upsource-HTTP-API-python/">http://www.rainmote.cn/2020/04/28/Upsource-HTTP-API-python/</a></span></div><div class="copyright-notice"><span class="copyright-notice__name">版权声明: </span><span class="copyright-notice__value">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" rel="external nofollow" target="_blank">BY-NC-SA</a> 许可协议。转载请注明出处！</span></div></div><div class="post-tags"><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://www.rainmote.cn/tags/%E7%BC%96%E7%A8%8B/">编程</a></span><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://www.rainmote.cn/tags/python/">python</a></span><span class="post-tags-item"><span class="post-tags-item__icon"><i class="fas fa-tag"></i></span><a class="post-tags-item__link" href="http://www.rainmote.cn/tags/upsource/">upsource</a></span></div><div class="post-share"><div class="social-share" data-sites="wechat, weibo, qq, douban, linkedin, facebook, twitter, google">分享: </div></div><div class="post-reward reward"><div class="reward-button">请我喝杯咖啡~</div><div class="reward-qrcode"><span class="reward-qrcode-alipay"><img class="reward-qrcode-alipay__img"><div class="reward-qrcode-alipay__text">支付宝打赏</div></span><span class="reward-qrcode-wechat"><img class="reward-qrcode-wechat__img" src="/images/wechat.jpg"><div class="reward-qrcode-wechat__text">微信打赏</div></span></div></div><nav class="post-paginator paginator"><div class="paginator-prev"><a class="paginator-prev__link" href="/2021/08/23/linux-expect-automated-interaction/"><span class="paginator-prev__icon"><i class="fas fa-angle-left"></i></span><span class="paginator-prev__text">Linux使用Expect做自动化交互</span></a></div><div class="paginator-next"><a class="paginator-next__link" href="/2019/09/12/current/"><span class="paginator-prev__text">路漫漫其修远兮，吾将上下而求索</span><span class="paginator-next__icon"><i class="fas fa-angle-right"></i></span></a></div></nav></footer></div></div></div><div class="sidebar-wrap" id="sidebar-wrap"><aside class="sidebar" id="sidebar"><div class="sidebar-nav"><span class="sidebar-nav-toc current">文章目录</span><span class="sidebar-nav-ov">站点概览</span></div><section class="sidebar-toc"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E8%83%8C%E6%99%AF"><span class="toc-number">1.</span> <span class="toc-text">
+          背景</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Upsource-HTTP-API%E8%AF%B4%E6%98%8E"><span class="toc-number">2.</span> <span class="toc-text">
+          Upsource HTTP API说明</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">
+          简单实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90%E5%87%BD%E6%95%B0"><span class="toc-number">4.</span> <span class="toc-text">
+          动态生成函数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E8%B7%AF"><span class="toc-number">4.1.</span> <span class="toc-text">
+          核心思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%8E%A2%E7%B4%A2"><span class="toc-number">4.2.</span> <span class="toc-text">
+          实现探索</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8%E8%A3%85%E9%A5%B0%E5%99%A8%E8%BF%9B%E8%A1%8C%E4%BC%98%E5%8C%96"><span class="toc-number">5.</span> <span class="toc-text">
+          使用装饰器进行优化</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%80%9D%E8%B7%AF-1"><span class="toc-number">5.1.</span> <span class="toc-text">
+          核心思路</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%9E%E7%8E%B0%E6%8E%A2%E7%B4%A2-1"><span class="toc-number">5.2.</span> <span class="toc-text">
+          实现探索</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="toc-number">6.</span> <span class="toc-text">
+          完整代码</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8A%A8%E6%80%81%E7%94%9F%E6%88%90"><span class="toc-number">6.1.</span> <span class="toc-text">
+          动态生成</span></a></li></ol></li></ol></section><!-- ov = overview--><section class="sidebar-ov hide"><div class="sidebar-ov-author"><div class="sidebar-ov-author__avatar"><img class="sidebar-ov-author__avatar_img" src="/images/avatar.jpg" alt="avatar"></div><p class="sidebar-ov-author__text">雨中尘埃</p></div><div class="sidebar-ov-social"><a class="sidebar-ov-social-item" href="https://github.com/rainmote" target="_blank" rel="noopener"><span class="sidebar-ov-social-item__icon"><i class="fab fa-github"></i></span><span class="sidebar-ov-social-item__text">GitHub</span></a><a class="sidebar-ov-social-item" href="/about" target="_blank" rel="noopener"><span class="sidebar-ov-social-item__icon"><i class="fab fa-weixin"></i></span><span class="sidebar-ov-social-item__text">Wechat</span></a><a class="sidebar-ov-social-item" href="mailto:rainmote@gmail.com" target="_blank" rel="noopener"><span class="sidebar-ov-social-item__icon"><i class="fas fa-envelope"></i></span><span class="sidebar-ov-social-item__text">Email</span></a><a class="sidebar-ov-social-item" href="https://twitter.com/rainmote9527" target="_blank" rel="noopener"><span class="sidebar-ov-social-item__icon"><i class="fab fa-twitter"></i></span><span class="sidebar-ov-social-item__text">twitter</span></a></div><div class="sidebar-ov-feed"><span class="sidebar-ov-feed-rss"><a class="sidebar-ov-feed-rss__link" href="/atom.xml" target="_blank" rel="noopener"><span class="sidebar-ov-feed-rss__icon"><i class="fas fa-rss"></i></span><span>RSS 订阅</span></a></span></div><div class="sidebar-ov-state"><a class="sidebar-ov-state-item sidebar-ov-state-item--posts" href="/archives/"><div class="sidebar-ov-state-item__count">5</div><div class="sidebar-ov-state-item__name">归档</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--categories" href="/categories/"><div class="sidebar-ov-state-item__count">3</div><div class="sidebar-ov-state-item__name">分类</div></a><a class="sidebar-ov-state-item sidebar-ov-state-item--tags" href="/tags/"><div class="sidebar-ov-state-item__count">10</div><div class="sidebar-ov-state-item__name">标签</div></a></div><div class="sidebar-ov-cc"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en" target="_blank" rel="noopener" data-popover="知识共享许可协议" data-popover-pos="up"><img src="/images/cc-by-nc-sa.svg"></a></div></section><div class="sidebar-reading"><div class="sidebar-reading-info"><span class="sidebar-reading-info__text">你已阅读了 </span><span class="sidebar-reading-info__num">0</span><span class="sidebar-reading-info__perc">%</span></div><div class="sidebar-reading-line"></div></div></aside></div><div class="clearfix"></div></div></main><footer class="footer" id="footer"><div class="footer-inner"><div><span>Copyright © 2021</span><span class="footer__icon"><i class="fas fa-heart"></i></span><span>rainmote</span></div><div><span>由 <a href="http://hexo.io/" title="Hexo" target="_blank" rel="noopener">Hexo</a> 强力驱动</span><span> v5.4.0</span><span class="footer__devider">|</span><span>主题 - <a href="https://github.com/liuyib/hexo-theme-stun/" title="Stun" target="_blank" rel="noopener">Stun</a></span><span> v2.6.2</span></div></div></footer><div class="loading-bar" id="loading-bar"><div class="loading-bar__progress"></div></div><div class="back2top" id="back2top"><span class="back2top__icon"><i class="fas fa-rocket"></i></span></div></div><div class="search-mask"></div><div class="search-popup"><span class="search-close"></span><div class="search-input"><input placeholder="搜索文章（支持多关键词，请用空格分隔）"></div><div class="search-results"></div></div><script src="https://cdn.jsdelivr.net/npm/jquery@v3.4.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.min.js"></script><script src="https://cdn.jsdelivr.net/npm/velocity-animate@1.5.2/velocity.ui.min.js"></script><script src="https://cdn.jsdelivr.net/npm/social-share.js@1.0.16/dist/js/social-share.min.js"></script><script>function initSearch() {
+  var isXML = true;
+  var search_path = 'search.json';
+
+  if (!search_path) {
+    search_path = 'search.xml';
+  } else if (/json$/i.test(search_path)) {
+    isXML = false;
+  }
+
+  var path = '/' + search_path;
+  $.ajax({
+    url: path,
+    dataType: isXML ? 'xml' : 'json',
+    async: true,
+    success: function (res) {
+      var datas = isXML ? $('entry', res).map(function () {
+        // 将 XML 转为 JSON
+        return {
+          title: $('title', this).text(),
+          content: $('content', this).text(),
+          url: $('url', this).text()
+        };
+      }).get() : res;
+      var $input = $('.search-input input');
+      var $result = $('.search-results');
+      // 搜索对象（标题、内容）的权重，影响显示顺序
+      var WEIGHT = { title: 100, content: 1 };
+      var searchPost = function () {
+        var searchText = $input.val().toLowerCase().trim();
+        // 根据空白字符分隔关键字
+        var keywords = searchText.split(/[\s]+/);
+        // 搜索结果
+        var matchPosts = [];
+
+        // 有多个关键字时，将原文字整个保存下来
+        if (keywords.length > 1) {
+          keywords.push(searchText);
+        }
+        // 防止未输入字符时搜索
+        if (searchText.length > 0) {
+          datas.forEach(function (data) {
+            var isMatch  = false;
+            // 没有标题的文章使用预设的 i18n 变量代替
+            var title = (data.title && data.title.trim()) || '[ 文章无标题 ]';
+            var titleLower = title && title.toLowerCase();
+            // 删除 HTML 标签 和 所有空白字符
+            var content = data.content && data.content.replace(/<[^>]+>/g, '');
+            var contentLower = content && content.toLowerCase();
+            // 删除重复的 /
+            var postURL = data.url && decodeURI(data.url).replace(/\/{2,}/g, '/');
+            // 标题中匹配到的关键词
+            var titleHitSlice = [];
+            // 内容中匹配到的关键词
+            var contentHitSlice = [];
+
+            keywords.forEach(function (keyword) {
+              /**
+              * 获取匹配的关键词的索引
+              * @param {String} keyword 要匹配的关键字
+              * @param {String} text 原文字
+              * @param {Boolean} caseSensitive 是否区分大小写
+              * @param {Number} weight 匹配对象的权重。权重大的优先显示
+              * @return {Array}
+              */
+              function getIndexByword (word, text, caseSensitive, weight) {
+                if (!word || !text) {
+                  return [];
+                };
+
+                var startIndex = 0; // 每次匹配的开始索引
+                var index = -1;     // 匹配到的索引值
+                var result = [];    // 匹配结果
+
+                if (!caseSensitive) {
+                  word = word.toLowerCase();
+                  text = text.toLowerCase();
+                }
+
+                while((index = text.indexOf(word, startIndex)) !== -1) {
+                  var hasMatch = false;
+                  // 索引位置相同的关键词，保留长度较长的
+                  titleHitSlice.forEach(function (hit) {
+                    if (hit.index === index && hit.word.length < word.length) {
+                      hit.word = word;
+                      hasMatch = true;
+                    }
+                  });
+                  startIndex = index + word.length;
+                  !hasMatch && result.push({ index: index, word: word, weight: weight });
+                }
+                return result;
+              }
+              titleHitSlice = titleHitSlice.concat(getIndexByword(keyword, titleLower, false, WEIGHT.title));
+              contentHitSlice = contentHitSlice.concat(getIndexByword(keyword, contentLower, false, WEIGHT.content));
+            });
+
+            var hitTitle = titleHitSlice.length;
+            var hitContent = contentHitSlice.length;
+
+            if (hitTitle > 0 || hitContent > 0) {
+              isMatch = true;
+            }
+            if (isMatch) {
+              ;[titleHitSlice, contentHitSlice].forEach(function (hit) {
+                // 按照匹配文字的索引的递增顺序排序
+                hit.sort(function (left, right) {
+                  return left.index - right.index;
+                });
+              });
+              /**
+              * 给文本中匹配到的关键词添加标记，从而进行高亮显示
+              * @param {String} text 原文本
+              * @param {Array} hitSlice 匹配项的索引信息
+              * @param {Number} start 开始索引
+              * @param {Number} end 结束索引
+              * @return {String}
+              */
+              function highlightKeyword (text, hitSlice, start, end) {
+                if (!text || !hitSlice || !hitSlice.length) {
+                  return;
+                }
+
+                var result = '';
+                var startIndex = start;
+                var endIndex = end;
+                hitSlice.forEach(function (hit) {
+                  if (hit.index < startIndex) {
+                    return;
+                  }
+
+                  var hitWordEnd = hit.index + hit.word.length;
+                  result += text.slice(startIndex, hit.index);
+                  result += '<b>' + text.slice(hit.index, hitWordEnd) + '</b>';
+                  startIndex = hitWordEnd;
+                });
+                result += text.slice(startIndex, endIndex);
+                return result;
+              }
+
+              var postData = {};
+              // 文章总的搜索权重
+              var postWeight = titleHitSlice.length * WEIGHT.title + contentHitSlice.length * WEIGHT.content;
+              // 标记匹配关键词后的标题
+              var postTitle = highlightKeyword(title, titleHitSlice, 0, title.length) || title;
+              // 标记匹配关键词后的内容
+              var postContent;
+              // 显示内容的长度
+              var SHOW_WORD_LENGTH = 200;
+              // 命中关键词前的字符显示长度
+              var SHOW_WORD_FRONT_LENGTH = 20;
+              var SHOW_WORD_END_LENGTH = SHOW_WORD_LENGTH - SHOW_WORD_FRONT_LENGTH;
+
+              // 截取匹配的第一个字符，前后共 200 个字符来显示
+              if (contentHitSlice.length > 0) {
+                var firstIndex = contentHitSlice[0].index;
+                var start = firstIndex > SHOW_WORD_FRONT_LENGTH ? firstIndex - SHOW_WORD_FRONT_LENGTH : 0;
+                var end = firstIndex + SHOW_WORD_END_LENGTH;
+                postContent = highlightKeyword(content, contentHitSlice, start, end);
+              } else { // 未匹配到内容，直接截取前 200 个字符来显示
+                postContent = content.slice(0, SHOW_WORD_LENGTH);
+              }
+              postData.title = postTitle;
+              postData.content = postContent;
+              postData.url = postURL;
+              postData.weight = postWeight;
+              matchPosts.push(postData);
+            }
+          });
+        }
+
+        var resultInnerHtml = '';
+        if (matchPosts.length) {
+          // 按权重递增的顺序排序，使权重大的优先显示
+          matchPosts.sort(function (left, right) {
+            return right.weight - left.weight;
+          });
+          resultInnerHtml += '<ul>';
+          matchPosts.forEach(function (post) {
+            resultInnerHtml += '<li><a class="search-results-title" href="' + post.url + '">';
+            resultInnerHtml += post.title;
+            resultInnerHtml += '</a><div class="search-results-content">';
+            resultInnerHtml += post.content;
+            resultInnerHtml += '</div></li>';
+          });
+          resultInnerHtml += '</ul>';
+        } else {
+          resultInnerHtml += '<div class="search-results-none"><i class="far fa-meh"></i></div>';
+        }
+        $result.html(resultInnerHtml);
+      };
+      $input.on('input', searchPost);
+      $input.on('keyup', function (e) {
+        if (e.keyCode === Stun.utils.codeToKeyCode('Enter')) {
+          searchPost();
+        }
+      });
+    }
+  });
+}
+
+function closeSearch () {
+  $('body').css({ overflow: 'auto' });
+  $('.search-popup').css({ display: 'none' });
+  $('.search-mask').css({ display: 'none' });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+  Stun.utils.pjaxReloadLocalSearch = function () {
+    $('.header-nav-search').on('click', function (e) {
+      e.stopPropagation();
+      $('body').css('overflow', 'hidden');
+      $('.search-popup')
+        .velocity('stop')
+        .velocity('transition.expandIn', {
+          duration: 300,
+          complete: function () {
+            $('.search-popup input').focus();
+          }
+        });
+      $('.search-mask')
+        .velocity('stop')
+        .velocity('transition.fadeIn', {
+          duration: 300
+        });
+
+      initSearch();
+    });
+    $('.search-mask, .search-close').on('click', function () {
+      closeSearch();
+    });
+    $(document).on('keydown', function (e) {
+      // Escape <=> 27
+      if (e.keyCode === Stun.utils.codeToKeyCode('Escape')) {
+        closeSearch();
+      }
+    });
+  };
+
+  Stun.utils.pjaxReloadLocalSearch();
+}, false);
+
+function safeOpenUrl(url) {
+  var newTab = window.open();
+  newTab.opener = null;
+  newTab.location = url;
+}
+
+function extSearch(engine) {
+  var engines = {
+    google: 'https://www.google.com/search?q=',
+    bing: 'https://cn.bing.com/search?q=',
+    baidu: 'https://www.baidu.com/s?ie=UTF-8&wd=',
+  };
+  var host = window.location.host;
+  var query = $('.search-input input').val().toLowerCase().trim();
+  var uri = engines[engine] + query + ' site:' + host;
+
+  if (query) {
+    safeOpenUrl(uri);
+  } else {
+    Stun.utils.popAlert('warning', '请输入字符');
+  }
+}
+
+var assistSearchList = window.CONFIG.assistSearch;
+
+if (Array.isArray(assistSearchList)) {
+  assistSearchList.forEach(function (name) {
+    document.querySelector('.search-btns-item--' + name).addEventListener('click', function () {
+      extSearch(name);
+    }, false);
+  });
+}</script><script src="/js/utils.js?v=2.6.2"></script><script src="/js/stun-boot.js?v=2.6.2"></script><script src="/js/scroll.js?v=2.6.2"></script><script src="/js/header.js?v=2.6.2"></script><script src="/js/sidebar.js?v=2.6.2"></script><script type="application/json" src="/search.json"></script></body></html>
